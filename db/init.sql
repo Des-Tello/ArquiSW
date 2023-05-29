@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS Usuarios(
     Correo VARCHAR(100), 
     Contrasena VARCHAR(100), 
     Telefono VARCHAR(100), 
-    Rolt VARCHAR(100), 
+    Rol VARCHAR(100), 
     Jardin VARCHAR(100), 
     primary key(Rut)
 );

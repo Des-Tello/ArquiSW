@@ -1,17 +1,40 @@
 import socket
 import time
 import sys
+
 # Create a TCP/IP socket
 sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
 # Connect the socket to the port where the server is listening
 server_address = ('localhost', 5000)
 print ('connecting to {} port {}'.format (*server_address))
 sock.connect (server_address)
+
+print("Menu: ")
+print("1 - Login")
+print("2 - Registro")
+opcion = input("¿Que desea hacer? ")
 try:
-    # Send data
-    message = b'00009servi 1 3'
-    print ('sending {!r}'.format (message))
-    sock.sendall (message)
+    # Login
+    if opcion == '1':
+        message = b'00010regisABEL'
+        print ('sending {!r}'.format (message))
+        sock.sendall (message)
+    
+    # Registro
+    elif opcion == '2':
+        Nombre = input("Ingrese el Nombre:")
+        Rut = input("Ingrese el Rut:")
+        Correo = input("Ingrese el Correo:")
+        Contrasena = input("Ingrese la Contrasena:")
+        Telefono = input("Ingrese el Telefono :")
+        Rol = input("Ingrese el Rol:")
+        Jardin  = input("Ingrese el Jardin :")
+
+        largo = len(Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin) + 12
+
+        message = '000{}regis {} {} {} {} {} {} {}'.format(largo,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall (message)
 
     data = sock.recv(1024).decode()
     print('received {!r}'.format(data))
