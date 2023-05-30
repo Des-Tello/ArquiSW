@@ -10,21 +10,29 @@ def read_init_sql(file_path):
 
 def registro(nombre, rut, correo, contrasena, telefono, rol, jardin):
     cursor.execute("""
-        INSERT INTO Usuarios (Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, (nombre, rut, correo, contrasena, telefono, rol, jardin))
-    conn.commit()
-    print("Usuario registrado con éxito.")
+        SELECT COUNT(*) FROM Usuarios WHERE Rut = ?
+    """, (rut,))
+    count = cursor.fetchone()[0]
+    
+    if count > 0:
+        print("El usuario ya está registrado.")
+    else:
+        cursor.execute("""
+            INSERT INTO Usuarios (Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (nombre, rut, correo, contrasena, telefono, rol, jardin))
+        conn.commit()
+        print("Usuario registrado con éxito.")
+
 
 def login(rut, contrasena):
     cursor.execute("""
         SELECT COUNT(*) FROM Usuarios WHERE Rut = ? AND Contrasena = ?
     """, (rut, contrasena))
-    count = cursor.fetchone()[0]
-    if count > 0:
-        print("El usuario existe en la tabla.")
-    else:
-        print("El usuario no existe en la tabla.")
+    rows = cursor.fetchall()
+
+    if len(rows) > 0:
+        print("Login Exitoso.")
 
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
@@ -53,31 +61,37 @@ try:
             print ("Processing sql...")
             try:
                 data = data.decode().split()
-                Nombre = data[1]
-                Rut = data[2]
-                Correo = data[3]
-                Contrasena = data[4]
-                Telefono = data[5]
-                Rol = data[6]
-                Jardin = data[7]
-                print('Registrando....')
-                registro(Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin)
+                opcion = data[1]
+                if opcion == '1':
+                    Rut = data[2]
+                    Contrasena = data[2]
+                    print('Ingresando...')
+                    login(Rut,Contrasena)
+                    message = '00015datosloginexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
 
-                message = '00010datosexito'.encode()
-                print ('sending {!r}'.format (message))
-                sock.send(message)
+                if opcion == '2':
+                    Nombre = data[2]
+                    Rut = data[3]
+                    Correo = data[4]
+                    Contrasena = data[5]
+                    Telefono = data[6]
+                    Rol = data[7]
+                    Jardin = data[8]
+                    print('Registrando...')
+                    registro(Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin)
+                    message = '00015datosregisexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
             except:
                 pass
+            print('-------------------------------')
             
 
 finally:
     print ('closing socket')
     sock.close ()
-
-
-# registro("Juan Pérez", "123456789", "juan@example.com", "contrasena123", "1234567890", "Administrador", "Mi Jardín")
-
-# login("123456789", "contrasena123")
 
 conn.commit()
 conn.close()

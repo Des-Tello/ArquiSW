@@ -16,7 +16,12 @@ opcion = input("¿Que desea hacer? ")
 try:
     # Login
     if opcion == '1':
-        message = b'00010regisABEL'
+        Rut = input("Ingrese el Rut:")
+        Contrasena = input("Ingrese la Contrasena:")
+
+        largo = len(Rut+Contrasena+opcion) + 13
+
+        message = '000{}login {} {} {}'.format(largo,opcion,Rut,Contrasena).encode()
         print ('sending {!r}'.format (message))
         sock.sendall (message)
     
@@ -30,9 +35,9 @@ try:
         Rol = input("Ingrese el Rol:")
         Jardin  = input("Ingrese el Jardin :")
 
-        largo = len(Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin) + 12
+        largo = len(Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin+opcion) + 13
 
-        message = '000{}regis {} {} {} {} {} {} {}'.format(largo,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin).encode()
+        message = '000{}regis {} {} {} {} {} {} {} {}'.format(largo,opcion,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin).encode()
         print ('sending {!r}'.format (message))
         sock.sendall (message)
 
