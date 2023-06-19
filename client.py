@@ -1,7 +1,6 @@
 import socket
 import time
 import sys
-from datetime import datetime
 
 # Create a TCP/IP socket
 sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
@@ -55,9 +54,9 @@ try:
         JardinID = input("Ingrese el ID del Jardin: ")
         CursoID = input("Ingrese el ID del Curso: ")
 
-        largo = len( Rut+Nombre+Apellido+FechaNacimiento+JardinID+CursoID+opcion ) + 13
+        largo = len(Rut+Nombre+Apellido+FechaNacimiento+JardinID+CursoID+opcion) + 13
 
-        message = '000{}newal {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID ).encode()
+        message = '000{}newal {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
 
@@ -66,7 +65,7 @@ try:
         Rut = input("Ingrese el Rut: ")
         Nombre = input("Ingrese el Nombre: ")
         Apellido = input("Ingrese el Apellido: ")
-        FechaNacimiento = datetime.strptime(input("Ingrese el Fecha de Nacimiento: "), "%Y-%m-%d")
+        FechaNacimiento = input("Ingrese el Fecha de Nacimiento (YYYY-MM-DD): ")
         JardinID = input("Ingrese el ID del Jardin: ")
         CursoID = input("Ingrese el ID del Curso: ")
 
@@ -89,7 +88,7 @@ try:
     # Control Asistencia - conas
     elif opcion == '6':
         Rut = input("Ingrese el rut del alumno o personal: ")
-        Fecha = datetime.strptime(input("Ingrese la Fecha: "), "%Y-%m-%d")
+        Fecha = input("Ingrese la Fecha (YYYY-MM-DD): ")
         Estado = input("Asiste (1-SI 0-NO) ")
 
         largo = len( Rut+Fecha+Estado ) + 13

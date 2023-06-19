@@ -13,7 +13,7 @@ try:
     sock.sendall (message)
     while True:
         # Look for the response
-        print ("Waiting for transaction Register")
+        print ("Waiting for Update transaction")
         amount_received = 0
         amount_expected = int(sock.recv(5))
         while amount_received < amount_expected:
@@ -32,7 +32,7 @@ try:
                 CursoID = data[7]
                 
                 largo = len(Rut+Nombre+Apellido+FechaNacimiento+JardinID+CursoID+opcion) + 13
-                message = '000{}datos {} {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID).encode()
+                message = '000{}datos {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID).encode()
                 print ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
                 if sock.recv(4096):

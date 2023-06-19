@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS Usuarios(
 );
 
 CREATE TABLE IF NOT EXISTS CURSO (
-    CursoID INT PRIMARY KEY,
-    JardinID INT,
-    PersonalID INT,
+    CursoID INTEGER PRIMARY KEY,
+    JardinID INTEGER,
+    PersonalID INTEGER,
     FOREIGN KEY (JardinID) REFERENCES JARDIN(JardinID),
     FOREIGN KEY (PersonalID) REFERENCES PERSONAL(PersonalID)
 );
@@ -22,15 +22,15 @@ CREATE TABLE IF NOT EXISTS ALUMNO (
     Nombre TEXT,
     Apellido TEXT,
     FechaNacimiento DATE,
-    JardinID INT,
-    CursoID INT,
+    JardinID INTEGER,
+    CursoID INTEGER,
     FOREIGN KEY (CursoID) REFERENCES CURSO(CursoID),
     FOREIGN KEY (JardinID) REFERENCES JARDIN(JardinID)
 );
 
 CREATE TABLE IF NOT EXISTS PERSONAL (
     Rut TEXT PRIMARY KEY,
-    JardinID INT,
+    JardinID INTEGER,
     Nombre TEXT,
     Apellido TEXT,
     Cargo TEXT,
@@ -39,15 +39,15 @@ CREATE TABLE IF NOT EXISTS PERSONAL (
 );
 
 CREATE TABLE IF NOT EXISTS JARDIN (
-    JardinID INT PRIMARY KEY,
+    JardinID INTEGER PRIMARY KEY,
     Nombre TEXT,
     Direccion TEXT,
     Telefono TEXT
 );
 
 CREATE TABLE IF NOT EXISTS ASISTENCIA (
-    AsistenciaID INT AUTO_INCREMENT PRIMARY KEY,
-    PersonaRut INT,
+    AsistenciaID INTEGER PRIMARY KEY AUTOINCREMENT,
+    PersonaRut INTEGER,
     Fecha DATE,
     Estado BOOLEAN,
     FOREIGN KEY (PersonaRut) REFERENCES PERSONAL(Rut),
@@ -55,8 +55,8 @@ CREATE TABLE IF NOT EXISTS ASISTENCIA (
 );
 
 CREATE TABLE IF NOT EXISTS PRIVILEGIO (
-    PrivilegioID INT PRIMARY KEY,
-    Nombre INT,
-    NivelPermiso INT
+    PrivilegioID INTEGER PRIMARY KEY,
+    Nombre INTEGER,
+    NivelPermiso INTEGER
 );
 

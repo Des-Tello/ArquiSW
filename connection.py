@@ -56,8 +56,6 @@ def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID):
     count = cursor.fetchone()[0]
     
     if count > 0:
-        print("El alumno ya está registrado.")
-    else:
         cursor.execute("""
             UPDATE ALUMNO 
             SET CursoID = ?, JardinID = ?, Nombre = ?, Apellido = ?, FechaNacimiento = ?
@@ -65,6 +63,8 @@ def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID):
         """, (CursoID, JardinID, Nombre, Apellido, FechaNacimiento, Rut))
         conn.commit()
         print("Alumno actualizado con éxito.")
+    else:
+        print("Alumno no existente.")
 
 def borrarAlumno(Rut):
     cursor.execute("""
@@ -82,11 +82,11 @@ def borrarAlumno(Rut):
     else:
         print("No hay ningun alumno existente.")
         
-def controlAsistencia(PersonaID,Fecha,Estado):
+def controlAsistencia(PersonaRut,Fecha,Estado):
     cursor.execute("""
-        INSERT INTO ASISTENCIA (PersonaID, Fecha, Estado)
+        INSERT INTO ASISTENCIA (PersonaRut, Fecha, Estado)
         VALUES (?, ?, ?);
-    """, (PersonaID, Fecha, Estado))
+    """, (PersonaRut, Fecha, Estado))
     conn.commit()
     print("Asistencia registrada con éxito.")
 
@@ -179,12 +179,12 @@ try:
                     sock.send(message)
 
                 if opcion == '6':
-                    PersonaID = data[2]
+                    PersonaRut = data[2]
                     Fecha = data[3]
                     Estado = data[4]
 
                     print('Asistencia Alumno...')
-                    controlAsistencia(PersonaID,Fecha,Estado)
+                    controlAsistencia(PersonaRut,Fecha,Estado)
                     message = '00015datosconasexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)

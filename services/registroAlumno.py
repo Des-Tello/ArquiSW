@@ -13,7 +13,7 @@ try:
     sock.sendall (message)
     while True:
         # Look for the response
-        print ("Waiting for transaction Register")
+        print ("Waiting for register transaction")
         amount_received = 0
         amount_expected = int(sock.recv(5))
         while amount_received < amount_expected:
