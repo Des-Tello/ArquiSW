@@ -24,7 +24,6 @@ def registro(nombre, rut, correo, contrasena, telefono, rol, jardin):
         conn.commit()
         print("Usuario registrado con éxito.")
 
-
 def login(rut, contrasena):
     cursor.execute("""
         SELECT COUNT(*) FROM Usuarios WHERE Rut = ? AND Contrasena = ?
@@ -33,6 +32,63 @@ def login(rut, contrasena):
 
     if len(rows) > 0:
         print("Login Exitoso.")
+
+def registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID):
+    cursor.execute("""
+        SELECT COUNT(*) FROM ALUMNO WHERE Rut = ?
+    """, (Rut,))
+    count = cursor.fetchone()[0]
+    
+    if count > 0:
+        print("El alumno ya está registrado.")
+    else:
+        cursor.execute("""
+            INSERT INTO ALUMNO (Rut, Nombre, Apellido, FechaNacimiento, JardinID, CursoID)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (Rut, Nombre, Apellido, FechaNacimiento, JardinID, CursoID))
+        conn.commit()
+        print("Alumno registrado con éxito.")
+
+def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID):
+    cursor.execute("""
+        SELECT COUNT(*) FROM ALUMNO WHERE Rut = ?
+    """, (Rut,))
+    count = cursor.fetchone()[0]
+    
+    if count > 0:
+        print("El alumno ya está registrado.")
+    else:
+        cursor.execute("""
+            UPDATE ALUMNO 
+            SET CursoID = ?, JardinID = ?, Nombre = ?, Apellido = ?, FechaNacimiento = ?
+            WHERE Rut = ?
+        """, (CursoID, JardinID, Nombre, Apellido, FechaNacimiento, Rut))
+        conn.commit()
+        print("Alumno actualizado con éxito.")
+
+def borrarAlumno(Rut):
+    cursor.execute("""
+        SELECT COUNT(*) FROM ALUMNO WHERE Rut = ?
+    """, (Rut,))
+    count = cursor.fetchone()[0]
+    
+    if count > 0:
+        cursor.execute("""
+            DELETE FROM ALUMNO 
+            WHERE Rut = ?
+        """, (Rut,))
+        conn.commit()
+        print("Alumno borrado con éxito.")
+    else:
+        print("No hay ningun alumno existente.")
+        
+def controlAsistencia(PersonaID,Fecha,Estado):
+    cursor.execute("""
+        INSERT INTO ASISTENCIA (PersonaID, Fecha, Estado)
+        VALUES (?, ?, ?);
+    """, (PersonaID, Fecha, Estado))
+    conn.commit()
+    print("Asistencia registrada con éxito.")
 
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
@@ -84,6 +140,55 @@ try:
                     message = '00015datosregisexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)
+
+                if opcion == '3':
+                    Rut = data[2]
+                    Nombre = data[3]
+                    Apellido = data[4]
+                    FechaNacimiento = data[5]
+                    JardinID = data[6]
+                    CursoID = data[7]
+
+                    print('Registrando Alumno...')
+                    registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID)
+                    message = '00015datosnewalexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
+                if opcion == '4':
+                    Rut = data[2]
+                    Nombre = data[3]
+                    Apellido = data[4]
+                    FechaNacimiento = data[5]
+                    JardinID = data[6]
+                    CursoID = data[7]
+
+                    print('Actualizando Alumno...')
+                    actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID)
+                    message = '00015datosupdalexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
+                if opcion == '5':
+                    Rut = data[2]
+
+                    print('Borrando Alumno...')
+                    borrarAlumno( Rut )
+                    message = '00015datosdelalexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
+                if opcion == '6':
+                    PersonaID = data[2]
+                    Fecha = data[3]
+                    Estado = data[4]
+
+                    print('Asistencia Alumno...')
+                    controlAsistencia(PersonaID,Fecha,Estado)
+                    message = '00015datosconasexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
             except:
                 pass
             print('-------------------------------')

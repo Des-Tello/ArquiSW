@@ -11,36 +11,47 @@ CREATE TABLE IF NOT EXISTS Usuarios(
 
 CREATE TABLE IF NOT EXISTS CURSO (
     CursoID INT PRIMARY KEY,
-    PersonalRut VARCHAR(100),
     JardinID INT,
-    FOREIGN KEY (PersonalRut) REFERENCES Usuarios(Rut),
-    FOREIGN KEY (JardinID) REFERENCES JARDIN(JardinID)
+    PersonalID INT,
+    FOREIGN KEY (JardinID) REFERENCES JARDIN(JardinID),
+    FOREIGN KEY (PersonalID) REFERENCES PERSONAL(PersonalID)
 );
 
 CREATE TABLE IF NOT EXISTS ALUMNO (
-    EstudianteRut VARCHAR(100) PRIMARY KEY,
-    CursoID INT,
-    JardinID INT,
+    Rut TEXT PRIMARY KEY,
     Nombre TEXT,
     Apellido TEXT,
     FechaNacimiento DATE,
+    JardinID INT,
+    CursoID INT,
     FOREIGN KEY (CursoID) REFERENCES CURSO(CursoID),
+    FOREIGN KEY (JardinID) REFERENCES JARDIN(JardinID)
+);
+
+CREATE TABLE IF NOT EXISTS PERSONAL (
+    Rut TEXT PRIMARY KEY,
+    JardinID INT,
+    Nombre TEXT,
+    Apellido TEXT,
+    Cargo TEXT,
+    FechaNacimiento DATE,
     FOREIGN KEY (JardinID) REFERENCES JARDIN(JardinID)
 );
 
 CREATE TABLE IF NOT EXISTS JARDIN (
     JardinID INT PRIMARY KEY,
-    Nombre VARCHAR(100),
+    Nombre TEXT,
     Direccion TEXT,
     Telefono TEXT
 );
 
 CREATE TABLE IF NOT EXISTS ASISTENCIA (
-    AsistenciaID INT PRIMARY KEY,
-    PersonaRut VARCHAR(100),
+    AsistenciaID INT AUTO_INCREMENT PRIMARY KEY,
+    PersonaRut INT,
     Fecha DATE,
     Estado BOOLEAN,
-    FOREIGN KEY (PersonaRut) REFERENCES Usuarios(Rut)
+    FOREIGN KEY (PersonaRut) REFERENCES PERSONAL(Rut),
+    FOREIGN KEY (PersonaRut) REFERENCES ALUMNO(Rut)
 );
 
 CREATE TABLE IF NOT EXISTS PRIVILEGIO (
@@ -48,3 +59,4 @@ CREATE TABLE IF NOT EXISTS PRIVILEGIO (
     Nombre INT,
     NivelPermiso INT
 );
+

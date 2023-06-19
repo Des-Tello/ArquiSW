@@ -1,6 +1,7 @@
 import socket
 import time
 import sys
+from datetime import datetime
 
 # Create a TCP/IP socket
 sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
@@ -11,7 +12,11 @@ sock.connect (server_address)
 
 print("Menu: ")
 print("1 - Login")
-print("2 - Registro")
+print("2 - Registro Usuario")
+print("3 - Registro Alumno")
+print("4 - Actualización Alumno")
+print("5 - Borrar Alumno")
+print("6 - Control Asistencia")
 opcion = input("¿Que desea hacer? ")
 try:
     # Login
@@ -40,6 +45,58 @@ try:
         message = '000{}regis {} {} {} {} {} {} {} {}'.format(largo,opcion,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin).encode()
         print ('sending {!r}'.format (message))
         sock.sendall (message)
+    
+    # Registro Alumno - newal
+    elif opcion == '3':
+        Rut = input("Ingrese el Rut: ")
+        Nombre = input("Ingrese el Nombre: ")
+        Apellido = input("Ingrese el Apellido: ")
+        FechaNacimiento = input("Ingrese el Fecha de Nacimiento (YYYY-MM-DD): ")
+        JardinID = input("Ingrese el ID del Jardin: ")
+        CursoID = input("Ingrese el ID del Curso: ")
+
+        largo = len( Rut+Nombre+Apellido+FechaNacimiento+JardinID+CursoID+opcion ) + 13
+
+        message = '000{}newal {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
+    # Actualización Alumno - updal
+    elif opcion == '4':
+        Rut = input("Ingrese el Rut: ")
+        Nombre = input("Ingrese el Nombre: ")
+        Apellido = input("Ingrese el Apellido: ")
+        FechaNacimiento = datetime.strptime(input("Ingrese el Fecha de Nacimiento: "), "%Y-%m-%d")
+        JardinID = input("Ingrese el ID del Jardin: ")
+        CursoID = input("Ingrese el ID del Curso: ")
+
+        largo = len( Rut+Nombre+Apellido+FechaNacimiento+JardinID+CursoID+opcion ) + 13
+
+        message = '000{}updal {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
+    # Borrar Alumno - delal
+    elif opcion == '5':
+        Rut = input("Ingrese el Rut: ")
+
+        largo = len( Rut ) + 13
+
+        message = '000{}delal {} {}'.format( largo,opcion,Rut ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
+    # Control Asistencia - conas
+    elif opcion == '6':
+        Rut = input("Ingrese el rut del alumno o personal: ")
+        Fecha = datetime.strptime(input("Ingrese la Fecha: "), "%Y-%m-%d")
+        Estado = input("Asiste (1-SI 0-NO) ")
+
+        largo = len( Rut+Fecha+Estado ) + 13
+
+        message = '000{}conas {} {} {} {}'.format( largo,opcion,Rut,Fecha,Estado ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
 
     data = sock.recv(1024).decode()
     print('received {!r}'.format(data))
