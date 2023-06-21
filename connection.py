@@ -90,6 +90,73 @@ def controlAsistencia(PersonaRut,Fecha,Estado):
     conn.commit()
     print("Asistencia registrada con éxito.")
 
+def ceacionJardin(Nombre, Direccion, Telefono):
+    cursor.execute("""
+        SELECT COUNT(*) FROM Jardin WHERE nombre = ?
+    """,(Nombre,))
+    existe = cursor.fetchone()[0]
+    if existe == 0:
+        cursor.execute(""""
+            INSERT INTO Jardin (Nombre, Direccion, Telefono) VALUES ( ?, ?, ?)
+        """, (Nombre, Direccion, Telefono))
+        conn.commit()
+        print("Jardin creado correctamente")
+    else:
+        print(f"El jardin {Nombre} ya está registrado")
+
+def actualizarJardin(Nombre, Direccion, Telefono):
+    cursor.execute("""
+    SELECT COUNT(*) FROM Jardin WHERE nombre = ?
+    """,(Nombre,))
+    existe = cursor.fetchone()[0]
+    if existe == 0:
+        print(f"El jardin {Nombre} no existe en la base de datos")
+    else:
+        cursor.execute("""
+            UPDATE Jardin SET Direccion = ?, telefono = ? WHERE Nombre = ?
+        """, (Direccion, Telefono, Nombre))
+        conn.commit()
+        print("Datos actualizados correctamente")
+
+def eliminarJardin(Nombre):
+    cursor.execute("""
+    SELECT COUNT(*) FROM Jardin WHERE nombre = ?
+    """,(Nombre,))
+    existe = cursor.fetchone()[0]
+    if existe == 0:
+        print(f"El jardin {Nombre} no existe en la base de datos")
+    else:
+        cursor.execute(""""
+            DELETE FROM Jardin WHERE nombre = ?
+        """, (Nombre,))
+        conn.commit()
+        print(f"El jardin {Nombre} se ha eliminado correctamente")
+
+def estadisticasJardin(Nombre):
+    cursor.execute("""
+        SELECT JardinID FROM Jardin WHERE nombre = ?
+    """,(Nombre,))
+    resultado = cursor.fetchone()
+
+    if resultado is None:
+        print("El jardin no existe")
+        return
+    
+    JardinID = resultado[0]
+    cursor.execute("""
+        SELECT COUNT(*) FROM Alumno WHERE JardinID = ?
+    """,(JardinID,))
+    Nalumnos = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*) FROM Personal WHERE JardinID = ?
+    """,(JardinID,))
+    Npersonal = cursor.fetchone()[0]
+
+    print(f"El jardin {Nombre} tiene:")
+    print(f"{Nalumnos} alumnos registrados")
+    print(f"{Npersonal} trabajadores registrados")
+
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
 
@@ -188,6 +255,18 @@ try:
                     message = '00015datosconasexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)
+
+                if opcion == '7':
+                    # CREAR JARDIN
+                
+                if opcion == '8':
+                    # ACTUALIZAR JARDIN
+
+                if opcion == '9':
+                    # ELIMINAR JARDIN
+
+                if opcion == '10':
+                    # ESTADISTICAS JARDIN
 
             except:
                 pass
