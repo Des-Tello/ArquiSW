@@ -115,13 +115,14 @@ try:
 
     # Actializar Jardin - updja
     elif opcion == '8':
-        Nombre = input("Ingrese el nombre del jardín a actualizar: ")
+        Nombre1 = input("Ingrese el nombre del jardín a actualizar: ")
+        Nombre2 = input("Ingrese el nuevo nombre para este jardin: ")
         Direccion = input("Ingrese la nueva dirección: ").replace(' ','-')
         Telefono = input("Ingrese el nuevo numero de telefono: +56 9")
 
-        largo = len( Nombre+Direccion+Telefono ) + 12
+        largo = len( Nombre1+Nombre2+Direccion+Telefono ) + 13
 
-        message = '000{}updja {} {} {} {}'.format( largo,opcion,Nombre,Direccion,Telefono ).encode()
+        message = '000{}updja {} {} {} {} {}'.format( largo,opcion,Nombre1,Nombre2,Direccion,Telefono ).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
 

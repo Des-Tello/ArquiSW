@@ -107,17 +107,17 @@ def creacionJardin(Nombre, Direccion, Telefono):
     except sqlite3.Error as error:
         print(error)
 
-def actualizarJardin(Nombre, Direccion, Telefono):
+def actualizarJardin(Nombre1, Nombre2, Direccion, Telefono):
     cursor.execute("""
     SELECT COUNT(*) FROM Jardin WHERE nombre = ?
-    """,(Nombre,))
+    """,(Nombre1,))
     existe = cursor.fetchone()[0]
     if existe == 0:
-        print(f"El jardin {Nombre} no existe en la base de datos")
+        print(f"El jardin {Nombre1} no existe en la base de datos")
     else:
         cursor.execute("""
-            UPDATE Jardin SET Direccion = ?, telefono = ? WHERE Nombre = ?
-        """, (Direccion, Telefono, Nombre))
+            UPDATE Jardin SET Nombre = ?, Direccion = ?, telefono = ? WHERE nombre = ?
+        """, (Nombre2, Direccion, Telefono, Nombre1))
         conn.commit()
         print("Datos actualizados correctamente")
 
@@ -276,12 +276,13 @@ try:
 
                 elif opcion == '8':
                     # ACTUALIZAR JARDIN
-                    Nombre = data[2]
-                    Direccion = data[3]
-                    Telefono = data[4]
+                    Nombre1 = data[2]
+                    Nombre2 = data[3]
+                    Direccion = data[4]
+                    Telefono = data[5]
 
                     print('Actualizando Jardin...')
-                    actualizarJardin(Nombre,Direccion,Telefono)
+                    actualizarJardin(Nombre1,Nombre2,Direccion,Telefono)
                     message = '00015datosupdjaexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)        
