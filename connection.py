@@ -177,7 +177,7 @@ def eliminarJardin(Nombre):
             conn.commit()
             print(f"El jardin {Nombre} se ha eliminado correctamente")
     except sqlite3.Error as error:
-        print("Error al crear el jardín:", error)
+        print("Error al eliminar el jardín:", error)
         
 def estadisticasJardin(Nombre):
     cursor.execute("""
@@ -202,6 +202,46 @@ def estadisticasJardin(Nombre):
         print(f"El jardin {Nombre} tiene:")
         print(f"{Nalumnos} alumnos registrados")
         print(f"{Npersonal} trabajadores registrados")
+
+def eliminarUsuario(Rut):
+    try:
+        cursor.execute("""
+            SELECT COUNT(*) FROM Usuario WHERE Rut = ?
+        """, (Rut,))
+        count_usuario = cursor.fetchone()[0]
+
+        if count_usuario < 1:
+            print("El usuario no existe.")
+        else:
+            cursor.execute("""
+                DELETE FROM Usuario WHERE Rut = ?
+            """, (Rut,))
+            conn.commit()
+            print(f'El usuario {Rut} se ha eliminado correctamente')
+    except sqlite3.Error as error:
+        print("Error al eliminar el usuario:", error)
+#ActualizarUsuario
+def actualizarUsuario(userID,Nombre, Apellido, Rut, Correo, Contrasena):
+    try:
+        cursor.execute("""
+            SELECT COUNT(*) FROM Usuario WHERE userID = ?
+        """, (userID,))
+        count_usuario = cursor.fetchone()[0]
+
+        if count_usuario < 1:
+            print("El ID de usuario no es valido.")
+        else:
+            cursor.execute("""
+                UPDATE Usuario SET Nombre = ?, Apellido = ?, Rut = ?, Correo = ?, Contrasena = ?
+                WHERE userID = ?
+            """, (Nombre, Apellido, Rut, Correo, Contrasena, userID))
+            conn.commit()
+            print("Usuario actualizado con éxito.")
+    except sqlite3.Error as error:
+        print("Error al actualizar el usuario:", error)
+
+
+
 
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
@@ -344,6 +384,16 @@ try:
                     print('Obteniendo estadisticas de Jardin...')
                     estadisticasJardin(Nombre)
                     message = '00015datosestjaexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+                
+                elif opcion =='11':
+                    #ELIMINAR USUARIO
+                    Rut = data[2]
+
+                    print('Eliminando Usuario...')
+                    eliminarUsuario(Rut)
+                    message = '00015datosdelusrexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 

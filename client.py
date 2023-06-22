@@ -20,6 +20,7 @@ print("7 - Creacion Jardín")
 print("8 - Actualización Jardín")
 print("9 - Eliminar Jardín")
 print("10 - Estadísticas Jardín")
+print('11 - Elominar Usuario')
 opcion = input("¿Que desea hacer? ")
 try:
     # Login
@@ -113,7 +114,7 @@ try:
         print ('sending {!r}'.format (message))
         sock.sendall( message )
 
-    # Actializar Jardin - updja
+    # Actualizar Jardin - updja
     elif opcion == '8':
         Nombre1 = input("Ingrese el nombre del jardín a actualizar: ")
         Nombre2 = input("Ingrese el nuevo nombre para este jardin: ")
@@ -146,6 +147,30 @@ try:
         print ('sending {!r}'.format (message))
         sock.sendall( message )
 
+    #Eliminar usuario - delus
+    elif opcion == '11': 
+        Rut = input("Ingrese el rut del usuario a eliminar: ")
+
+        largo = len( Rut ) + 10
+
+        message = '000{}delus {} {}'.format( largo,opcion,Rut ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
+    #Actualizacion de usuario - updus
+    elif opcion == '12':
+        userID = input("Ingrese el ID del usuario a actualizar: ")
+        Nombre = input("Ingrese el nuevo nombre: ")
+        Apellido = input("Ingrese el nuevo apellido: ")
+        Rut = input("Ingrese el nuevo rut: ")
+        Correo = input("Ingrese el nuevo correo: ")
+        Contrasena = input("Ingrese la nueva contraseña: ")
+
+        largo = len( userID+Nombre+Apellido+Rut+Correo+Contrasena ) + 15
+
+        message = '000{}updus {} {} {} {} {} {} {}'.format( largo,opcion,userID,Nombre,Apellido,Rut,Correo,Contrasena ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
 
     data = sock.recv(1024).decode()
     print('received {!r}'.format(data))
@@ -153,6 +178,7 @@ try:
     
     while True:
         # Look for the response
+        
         print ("Waiting for transaction")
         time.sleep(2)
         data = sock.recv(4096).decode()
