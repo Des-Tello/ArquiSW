@@ -137,6 +137,7 @@ def eliminarJardin(Nombre):
             print(f"El jardin {Nombre} se ha eliminado correctamente")
     except sqlite3.Error as error:
         print("Error al crear el jardín:", error)
+        
 def estadisticasJardin(Nombre):
     cursor.execute("""
         SELECT JardinID FROM Jardin WHERE nombre = ?
