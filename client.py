@@ -20,7 +20,9 @@ print("7 - Creacion Jardín")
 print("8 - Actualización Jardín")
 print("9 - Eliminar Jardín")
 print("10 - Estadísticas Jardín")
-print('11 - Elominar Usuario')
+print('11 - Eliminar Usuario')
+print('12 - Actualizar Usuario')
+print('13 - Registo Personal ')
 opcion = input("¿Que desea hacer? ")
 try:
     # Login
@@ -159,16 +161,30 @@ try:
 
     #Actualizacion de usuario - updus
     elif opcion == '12':
-        userID = input("Ingrese el ID del usuario a actualizar: ")
+        Rut = input("Ingrese el RUT del usuario a actualizar: ")
         Nombre = input("Ingrese el nuevo nombre: ")
         Apellido = input("Ingrese el nuevo apellido: ")
-        Rut = input("Ingrese el nuevo rut: ")
         Correo = input("Ingrese el nuevo correo: ")
         Contrasena = input("Ingrese la nueva contraseña: ")
 
-        largo = len( userID+Nombre+Apellido+Rut+Correo+Contrasena ) + 15
+        largo = len( Nombre+Apellido+Rut+Correo+Contrasena ) + 14
 
-        message = '000{}updus {} {} {} {} {} {} {}'.format( largo,opcion,userID,Nombre,Apellido,Rut,Correo,Contrasena ).encode()
+        message = '000{}updus {} {} {} {} {} {}'.format( largo,opcion,Nombre,Apellido,Rut,Correo,Contrasena ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
+    #Registrar Personal - newpe
+    elif opcion == '13':
+        Nombre = input("Ingrese el Nombre: ")
+        Apellido = input("Ingrese el Apellido: ")
+        Rut = input("Ingrese el Rut: ")
+        Cargo = input("Ingrese el Cargo: ")
+        FechaNacimiento = input("Ingrese el Rol: ")
+        Jardin = input("Ingrese el Jardin: ")
+
+        largo = len( Nombre+Apellido+Rut+Cargo+FechaNacimiento+Jardin+opcion ) + 16
+
+        message = '000{}newpe {} {} {} {} {} {} {} {}'.format( largo,opcion,Nombre,Apellido,Rut,Cargo,FechaNacimiento,Jardin ).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
 

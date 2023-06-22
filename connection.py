@@ -206,7 +206,7 @@ def estadisticasJardin(Nombre):
 def eliminarUsuario(Rut):
     try:
         cursor.execute("""
-            SELECT COUNT(*) FROM Usuario WHERE Rut = ?
+            SELECT COUNT(*) FROM Usuarios WHERE Rut = ?
         """, (Rut,))
         count_usuario = cursor.fetchone()[0]
 
@@ -214,7 +214,7 @@ def eliminarUsuario(Rut):
             print("El usuario no existe.")
         else:
             cursor.execute("""
-                DELETE FROM Usuario WHERE Rut = ?
+                DELETE FROM Usuarios WHERE Rut = ?
             """, (Rut,))
             conn.commit()
             print(f'El usuario {Rut} se ha eliminado correctamente')
@@ -239,8 +239,33 @@ def actualizarUsuario(userID,Nombre, Apellido, Rut, Correo, Contrasena):
             print("Usuario actualizado con éxito.")
     except sqlite3.Error as error:
         print("Error al actualizar el usuario:", error)
+#Registrar Personial
+def registrarPersonal(Nombre, Rut, Correo, Contrasena, Telefono, Rol , Jardin ):
+    try:
+        #Reviso que exista un persona con ese rut
+        cursor.execute("""
+            SELECT COUNT(*) FROM Personal WHERE Rut = ?
+        """, (Rut,))
+        count_personal = cursor.fetchone()[0]
+        #Reeviso que existasta el jardin
+        cursor.execute("""
+            SELECT COUNT(*) FROM Jardin WHERE NombreJardin = ?
+        """, (Jardin,))
+        count_jardin = cursor.fetchone()[0]
 
-
+        if count_personal > 0  and count_jardin > 0:
+            print("El rut ya se encuentra registrado.")
+        elif count_jardin < 1:
+            print("El jardin no existe.")
+        else:
+            cursor.execute("""
+                INSERT INTO Personal (Nombre, Rut, Correo, Contrasena, Telefono, Rol, NombreJardin)
+                VALUES (?, ?, ?, ?, ?, ?, ?);
+            """, (Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin))
+            conn.commit()
+            print("Personal registrado con éxito.")
+    except sqlite3.Error as error:
+        print("Error al registrar el personal:", error)
 
 
 conn = sqlite3.connect("database.db")
@@ -394,6 +419,36 @@ try:
                     print('Eliminando Usuario...')
                     eliminarUsuario(Rut)
                     message = '00015datosdelusrexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
+                elif opcion =='12':
+                    #ACTUALIZAR USUARIO
+                    Rut = data[2]
+                    Nombre = data[3]
+                    Aepllido = data[4]
+                    Correo = data[4]
+                    Contrasena = data[5]
+                    
+                    print('Actualizando Usuario...')
+                    actualizarUsuario(Rut,Nombre,Aepllido,Correo,Contrasena)
+                    message = '00015datosupdusrexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
+                elif opcion =='13':
+                    #REGISTRAR PERSONAL
+                    Nombre = data[2]
+                    Rut = data[3]
+                    Contrasena = data[4]
+                    Telefono = data[5]
+                    Cargo = data[6]
+                    Rol = data[7]
+                    Jardin = data[8]
+
+                    print('Registrando Personal...')
+                    registrarPersonal(Nombre,Rut,Contrasena,Telefono,Cargo,Rol,Jardin)
+                    message = '00015datosnewpexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
