@@ -24,12 +24,12 @@ try:
             data = data.decode().split()
             try:
                 opcion = data[1]
-                Nombre = data[2]
+                NombreJardin = data[2]
                 Direccion = data[3]
                 Telefono = data[4]
                 
-                largo = len(Nombre+Direccion+Telefono+opcion) + 12
-                message = '000{}datos {} {} {} {}'.format(largo,opcion,Nombre,Direccion,Telefono).encode()
+                largo = len(NombreJardin+Direccion+Telefono+opcion) + 12
+                message = '000{}datos {} {} {} {}'.format(largo,opcion,NombreJardin,Direccion,Telefono).encode()
                 print ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
                 if sock.recv(4096):

@@ -28,11 +28,11 @@ try:
                 Nombre = data[3]
                 Apellido = data[4]
                 FechaNacimiento = data[5]
-                JardinID = data[6]
+                NombreJardin = data[6]
                 CursoID = data[7]
                 
-                largo = len(Rut+Nombre+Apellido+FechaNacimiento+JardinID+CursoID+opcion) + 13
-                message = '000{}datos {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID).encode()
+                largo = len(Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID+opcion) + 13
+                message = '000{}datos {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID).encode()
                 print ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
                 if sock.recv(4096):

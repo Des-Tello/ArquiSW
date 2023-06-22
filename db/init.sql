@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS Usuarios(
 
 CREATE TABLE IF NOT EXISTS CURSO (
     CursoID INTEGER PRIMARY KEY,
-    JardinID INTEGER,
+    NombreJardin INTEGER,
     PersonalID INTEGER,
-    FOREIGN KEY (JardinID) REFERENCES JARDIN(JardinID),
+    FOREIGN KEY (NombreJardin) REFERENCES JARDIN(NombreJardin),
     FOREIGN KEY (PersonalID) REFERENCES PERSONAL(PersonalID)
 );
 
@@ -22,25 +22,24 @@ CREATE TABLE IF NOT EXISTS ALUMNO (
     Nombre TEXT,
     Apellido TEXT,
     FechaNacimiento DATE,
-    JardinID INTEGER,
+    NombreJardin TEXT,
     CursoID INTEGER,
     FOREIGN KEY (CursoID) REFERENCES CURSO(CursoID),
-    FOREIGN KEY (JardinID) REFERENCES JARDIN(JardinID)
+    FOREIGN KEY (NombreJardin) REFERENCES JARDIN(NombreJardin)
 );
 
 CREATE TABLE IF NOT EXISTS PERSONAL (
     Rut TEXT PRIMARY KEY,
-    JardinID INTEGER,
+    NombreJardin INTEGER,
     Nombre TEXT,
     Apellido TEXT,
     Cargo TEXT,
     FechaNacimiento DATE,
-    FOREIGN KEY (JardinID) REFERENCES JARDIN(JardinID)
+    FOREIGN KEY (NombreJardin) REFERENCES JARDIN(NombreJardin)
 );
 
 CREATE TABLE IF NOT EXISTS JARDIN (
-    JardinID INTEGER PRIMARY KEY,
-    Nombre TEXT,
+    NombreJardin TEXT PRIMARY KEY,
     Direccion TEXT,
     Telefono TEXT
 );

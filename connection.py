@@ -33,39 +33,67 @@ def login(rut, contrasena):
     if len(rows) > 0:
         print("Login Exitoso.")
 
-def registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID):
+def registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     cursor.execute("""
         SELECT COUNT(*) FROM ALUMNO WHERE Rut = ?
     """, (Rut,))
-    count = cursor.fetchone()[0]
+    count_alumno = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*) FROM JARDIN WHERE NombreJardin = ?
+    """, (NombreJardin,))
+    count_jardin = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*) FROM CURSO WHERE CursoID = ? and NombreJardin = ?
+    """, (CursoID,NombreJardin))
+    count_curso = cursor.fetchone()[0]
     
-    if count > 0:
+    if count_alumno > 0:
         print("El alumno ya está registrado.")
+    elif count_jardin < 1:
+        print("El jardín no existe.")
+    # elif count_curso < 1:
+    #     print("El curso no existe en el jardín asociado.")
     else:
         cursor.execute("""
-            INSERT INTO ALUMNO (Rut, Nombre, Apellido, FechaNacimiento, JardinID, CursoID)
+            INSERT INTO ALUMNO (Rut, Nombre, Apellido, FechaNacimiento, NombreJardin, CursoID)
             VALUES (?, ?, ?, ?, ?, ?)
-        """, (Rut, Nombre, Apellido, FechaNacimiento, JardinID, CursoID))
+        """, (Rut, Nombre, Apellido, FechaNacimiento, NombreJardin, CursoID))
         conn.commit()
         print("Alumno registrado con éxito.")
 
-def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID):
+def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     cursor.execute("""
         SELECT COUNT(*) FROM ALUMNO WHERE Rut = ?
     """, (Rut,))
-    count = cursor.fetchone()[0]
+    count_alumno = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*) FROM JARDIN WHERE NombreJardin = ?
+    """, (NombreJardin,))
+    count_jardin = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*) FROM CURSO WHERE CursoID = ? and NombreJardin = ?
+    """, (CursoID,NombreJardin))
+    count_curso = cursor.fetchone()[0]
     
-    if count > 0:
+    if count_alumno < 1:
+        print("Alumno no existente.")
+    elif count_jardin < 1:
+        print("El jardín no existe.")
+    # elif count_curso < 1:
+    #     print("El curso no existe en el jardín asociado.")
+    else:
         cursor.execute("""
             UPDATE ALUMNO 
-            SET CursoID = ?, JardinID = ?, Nombre = ?, Apellido = ?, FechaNacimiento = ?
+            SET CursoID = ?, NombreJardin = ?, Nombre = ?, Apellido = ?, FechaNacimiento = ?
             WHERE Rut = ?
-        """, (CursoID, JardinID, Nombre, Apellido, FechaNacimiento, Rut))
+        """, (CursoID, NombreJardin, Nombre, Apellido, FechaNacimiento, Rut))
         conn.commit()
         print("Alumno actualizado con éxito.")
-    else:
-        print("Alumno no existente.")
-
+        
 def borrarAlumno(Rut):
     cursor.execute("""
         SELECT COUNT(*) FROM ALUMNO WHERE Rut = ?
@@ -84,39 +112,52 @@ def borrarAlumno(Rut):
         
 def controlAsistencia(PersonaRut,Fecha,Estado):
     cursor.execute("""
-        INSERT INTO ASISTENCIA (PersonaRut, Fecha, Estado)
-        VALUES (?, ?, ?);
-    """, (PersonaRut, Fecha, Estado))
-    conn.commit()
-    print("Asistencia registrada con éxito.")
+        SELECT COUNT(*) FROM ALUMNO WHERE Rut = ?
+    """, (PersonaRut,))
+    count_alumno = cursor.fetchone()[0]
 
-def creacionJardin(Nombre, Direccion, Telefono):
+    cursor.execute("""
+        SELECT COUNT(*) FROM ALUMNO WHERE Rut = ?
+    """, (PersonaRut,))
+    count_personal = cursor.fetchone()[0]
+
+    if count_alumno < 1 and count_personal < 1:
+        print("No se ha encontrado ningun rut asociado")
+    else:
+        cursor.execute("""
+            INSERT INTO ASISTENCIA (PersonaRut, Fecha, Estado)
+            VALUES (?, ?, ?);
+        """, (PersonaRut, Fecha, Estado))
+        conn.commit()
+        print("Asistencia registrada con éxito.")
+
+def creacionJardin(NombreJardin, Direccion, Telefono):
     try:
         cursor.execute("""
-            SELECT COUNT(*) FROM Jardin WHERE nombre = ?
-        """,(Nombre,))
+            SELECT COUNT(*) FROM Jardin WHERE NombreJardin = ?
+        """,(NombreJardin,))
         existe = cursor.fetchone()[0]
         if existe == 0:
             cursor.execute("""
-                INSERT INTO Jardin (Nombre, Direccion, Telefono) VALUES (?, ?, ?)
-            """, (Nombre, Direccion, Telefono))
+                INSERT INTO Jardin (NombreJardin, Direccion, Telefono) VALUES (?, ?, ?)
+            """, (NombreJardin, Direccion, Telefono))
             conn.commit()
             print("Jardin creado correctamente")
         else:
-            print(f"El jardin {Nombre} ya está registrado")
+            print(f"El jardin {NombreJardin} ya está registrado")
     except sqlite3.Error as error:
         print(error)
 
 def actualizarJardin(Nombre1, Nombre2, Direccion, Telefono):
     cursor.execute("""
-    SELECT COUNT(*) FROM Jardin WHERE nombre = ?
+    SELECT COUNT(*) FROM Jardin WHERE NombreJardin = ?
     """,(Nombre1,))
     existe = cursor.fetchone()[0]
     if existe == 0:
         print(f"El jardin {Nombre1} no existe en la base de datos")
     else:
         cursor.execute("""
-            UPDATE Jardin SET Nombre = ?, Direccion = ?, telefono = ? WHERE nombre = ?
+            UPDATE Jardin SET NombreJardin = ?, Direccion = ?, telefono = ? WHERE NombreJardin = ?
         """, (Nombre2, Direccion, Telefono, Nombre1))
         conn.commit()
         print("Datos actualizados correctamente")
@@ -124,14 +165,14 @@ def actualizarJardin(Nombre1, Nombre2, Direccion, Telefono):
 def eliminarJardin(Nombre):
     try:
         cursor.execute("""
-        SELECT COUNT(*) FROM Jardin WHERE nombre = ?
+        SELECT COUNT(*) FROM Jardin WHERE NombreJardin = ?
         """,(Nombre,))
         existe = cursor.fetchone()[0]
         if existe == 0:
             print(f"El jardin {Nombre} no existe en la base de datos")
         else:
             cursor.execute("""
-                DELETE FROM Jardin WHERE nombre = ?
+                DELETE FROM Jardin WHERE NombreJardin = ?
             """, (Nombre,))
             conn.commit()
             print(f"El jardin {Nombre} se ha eliminado correctamente")
@@ -140,28 +181,27 @@ def eliminarJardin(Nombre):
         
 def estadisticasJardin(Nombre):
     cursor.execute("""
-        SELECT JardinID FROM Jardin WHERE nombre = ?
-    """,(Nombre,))
-    resultado = cursor.fetchone()
+        SELECT COUNT(*) FROM JARDIN WHERE NombreJardin = ?
+    """, (Nombre,))
+    count_jardin = cursor.fetchone()[0]
 
-    if resultado is None:
-        print("El jardin no existe")
-        return
-    
-    JardinID = resultado[0]
-    cursor.execute("""
-        SELECT COUNT(*) FROM Alumno WHERE JardinID = ?
-    """,(JardinID,))
-    Nalumnos = cursor.fetchone()[0]
+    if count_jardin < 1:
+        print("El jardin no existe.")
+    else:
+        # JardinID = resultado[0]
+        cursor.execute("""
+            SELECT COUNT(*) FROM Alumno WHERE NombreJardin = ?
+        """,(Nombre,))
+        Nalumnos = cursor.fetchone()[0]
 
-    cursor.execute("""
-        SELECT COUNT(*) FROM Personal WHERE JardinID = ?
-    """,(JardinID,))
-    Npersonal = cursor.fetchone()[0]
+        cursor.execute("""
+            SELECT COUNT(*) FROM Personal WHERE NombreJardin = ?
+        """,(Nombre,))
+        Npersonal = cursor.fetchone()[0]
 
-    print(f"El jardin {Nombre} tiene:")
-    print(f"{Nalumnos} alumnos registrados")
-    print(f"{Npersonal} trabajadores registrados")
+        print(f"El jardin {Nombre} tiene:")
+        print(f"{Nalumnos} alumnos registrados")
+        print(f"{Npersonal} trabajadores registrados")
 
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
@@ -219,11 +259,11 @@ try:
                     Nombre = data[3]
                     Apellido = data[4]
                     FechaNacimiento = data[5]
-                    JardinID = data[6]
+                    NombreJardin = data[6]
                     CursoID = data[7]
 
                     print('Registrando Alumno...')
-                    registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID)
+                    registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID)
                     message = '00015datosnewalexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)
@@ -233,11 +273,11 @@ try:
                     Nombre = data[3]
                     Apellido = data[4]
                     FechaNacimiento = data[5]
-                    JardinID = data[6]
+                    NombreJardin = data[6]
                     CursoID = data[7]
 
                     print('Actualizando Alumno...')
-                    actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID)
+                    actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID)
                     message = '00015datosupdalexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)

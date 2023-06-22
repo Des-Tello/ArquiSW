@@ -55,12 +55,12 @@ try:
         Nombre = input("Ingrese el Nombre: ")
         Apellido = input("Ingrese el Apellido: ")
         FechaNacimiento = input("Ingrese el Fecha de Nacimiento (YYYY-MM-DD): ")
-        JardinID = input("Ingrese el ID del Jardin: ")
+        NombreJardin = input("Ingrese el nombre del Jardin: ").replace(" ", "-")
         CursoID = input("Ingrese el ID del Curso: ")
 
-        largo = len(Rut+Nombre+Apellido+FechaNacimiento+JardinID+CursoID+opcion) + 13
+        largo = len(Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID+opcion) + 13
 
-        message = '000{}newal {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID).encode()
+        message = '000{}newal {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
 
@@ -70,12 +70,12 @@ try:
         Nombre = input("Ingrese el Nombre: ")
         Apellido = input("Ingrese el Apellido: ")
         FechaNacimiento = input("Ingrese el Fecha de Nacimiento (YYYY-MM-DD): ")
-        JardinID = input("Ingrese el ID del Jardin: ")
+        NombreJardin = input("Ingrese el nombre del Jardin: ").replace(" ", "-")
         CursoID = input("Ingrese el ID del Curso: ")
 
-        largo = len( Rut+Nombre+Apellido+FechaNacimiento+JardinID+CursoID+opcion ) + 13
+        largo = len( Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID+opcion ) + 13
 
-        message = '000{}updal {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,JardinID,CursoID ).encode()
+        message = '000{}updal {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID ).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
 
@@ -103,13 +103,13 @@ try:
 
     # Creacion Jardin - newja
     elif opcion == '7':
-        Nombre = input("Ingrese el nombre del jardín a crear: ").replace(' ','-')
+        NombreJardin = input("Ingrese el nombre del jardín a crear: ").replace(' ','-')
         Direccion = input("Ingrese la dirección del jardín: ").replace(' ','-')
         Telefono = input("Ingrese el numero de telefono asociado: +56 9 ")
 
-        largo = len(Nombre+Direccion+Telefono) + 12
+        largo = len(NombreJardin+Direccion+Telefono+opcion) + 12
 
-        message = '000{}newja {} {} {} {}'.format( largo,opcion,Nombre,Direccion,Telefono ).encode()
+        message = '000{}newja {} {} {} {}'.format( largo,opcion,NombreJardin,Direccion,Telefono ).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
 
