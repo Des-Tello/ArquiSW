@@ -286,6 +286,60 @@ def registrarPersonal(Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento):
     except sqlite3.Error as error:
         print("Error al registrar el personal:", error)
 
+def comparacionAsistencia(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta):
+    try:
+        #cursor.execute("""
+        #        INSERT INTO Curso (CursoID,NombreJardin,PersonalID) VALUES (2, sexo, 1)
+        #    """)
+        cursor.execute("""
+            SELECT CURSO.CursoID, ALUMNO.Nombre, ALUMNO.Apellido, ASISTENCIA.Fecha, ASISTENCIA.Estado FROM ASISTENCIA JOIN ALUMNO ON ASISTENCIA.PersonaRut = ALUMNO.Rut
+                    JOIN CURSO ON ALUMNO.CursoID = CURSO.CursoID
+                    WHERE CURSO.CursoID IN (?,?) AND ASISTENCIA.Fecha BETWEEN ? AND ?
+        """,(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta,))
+        conn.commit()
+        Npersonal = cursor.fetchall()
+        print("Comparación de Asistencia a continuación.")
+        #Npersonal = cursor.fetchall()
+        print(Npersonal)
+    except sqlite3.Error as error:
+        print("Error al comparar asistencia:", error)
+
+def visualizacionAsistenciaPersonal(PersonalID,Fecha):
+    try:
+        #cursor.execute("""
+        #        INSERT INTO PERSONAL (Rut,NombreJardin,Nombre,Apellido,Cargo,FechaNacimiento) VALUES ('20245835-1','Sandeli','Abel','Baulloza','ProGOD','2000-07-12')
+        #    """)
+
+        cursor.execute("""
+            SELECT * FROM ASISTENCIA JOIN PERSONAL ON ASISTENCIA.PersonaRut = PERSONAL.Rut
+            WHERE PERSONAL.Rut = ? AND ASISTENCIA.Fecha = ?
+        """,(PersonalID,Fecha,))
+        conn.commit()
+
+        Npersonal = cursor.fetchall()
+
+        #Npersonal = cursor.fetchall()
+        print("Visualización Asistencia de Personal a continuación.")
+        print(Npersonal)
+    except sqlite3.Error as error:
+        print("Error al visualizar asistencias de personal:", error)
+
+def asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta):
+    try:
+        cursor.execute("""
+            SELECT * FROM ASISTENCIA JOIN ALUMNO ON ASISTENCIA.PersonaRut = ALUMNO.Rut
+            WHERE ALUMNO.NombreJardin = ? AND ASISTENCIA.Fecha BETWEEN ? AND ?
+        """,(NombreJardin,FechaDesde,FechaHasta))
+        conn.commit()
+
+        Npersonal = cursor.fetchall()
+
+        #Npersonal = cursor.fetchall()
+        print("Asistencia por Jardin a continuación.")
+        print(Npersonal)
+    except sqlite3.Error as error:
+        print("Error al revisar las asistencias por jardín:", error)
+
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
 
@@ -468,6 +522,43 @@ try:
                     print('Registrando Personal...')
                     registrarPersonal(Rut,Jardin,Nombre,Apellido,Cargo,FechaNacimiento)
                     message = '00015datosnewpexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
+                elif opcion == '14':
+                    #   COMPARACIÓN ASISTENCIA
+                    NivelEducativo1 = data[2]
+                    NivelEducativo2 = data[3]
+                    FechaDesde = data[4]
+                    FechaHasta = data[5]
+
+
+                    print('Comparando asistencias ...')
+                    comparacionAsistencia(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta)
+                    message = '00015datoscomasexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
+                elif opcion == '15':
+                    #   Visualizacion ASISTENCIA por personal
+                    PersonalID = data[2]
+                    Fecha = data[3]
+
+                    print('Visualizando asistencias ...')
+                    visualizacionAsistenciaPersonal(PersonalID,Fecha)
+                    message = '00015datosasipeexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
+                elif opcion == '16':
+                    #   Asistencia por Jardin
+                    NombreJardin = data[2]
+                    FechaDesde = data[3]
+                    FechaHasta = data[4]
+
+                    print('Visualizando asistencias ...')
+                    asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta)
+                    message = '00015datosasipeexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 

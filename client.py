@@ -23,6 +23,10 @@ print("10 - Estadísticas Jardín")
 print('11 - Eliminar Usuario')
 print('12 - Actualizar Usuario')
 print('13 - Registo Personal ')
+print("14 - Asistencia por Jardin")
+print("15 - Comparación Asistencia")
+print("16 - Visualización Asistencia de Personal")
+
 opcion = input("¿Que desea hacer? ")
 try:
     # Login
@@ -189,6 +193,43 @@ try:
         message = '000{}newpe {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Jardin,Nombre,Apellido,Cargo,FechaNacimiento ).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
+
+    # Comparación Asistencia - comas
+    elif opcion == '14':
+        NivelEducativo1 = input("Ingrese Nivel Educativo 1: ")
+        NivelEducativo2 = input("Ingrese Nivel Educativo 2: ")
+        FechaDesde = input("Ingrese Fecha desde: ")
+        FechaHasta = input("Ingrese Fecha hasta: ")
+        
+        largo = len(NivelEducativo1+NivelEducativo2+FechaDesde+FechaHasta+opcion) + 10
+
+        message = '000{}comas {} {} {} {} {}'.format(largo,opcion,NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
+    # Visualización Asistencia de Personal - asipe
+    elif opcion == '15':
+        PersonalID = input("Ingrese ID de Personal: ")
+        Fecha = input("Ingrese Fecha: ")
+        
+        largo = len(PersonalID+Fecha+opcion) + 10
+
+        message = '000{}asipe {} {} {}'.format(largo,opcion,PersonalID,Fecha).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
+    # Asistencia por jardin - asija
+    elif opcion == '16':
+        NombreJardin = input("Ingrese Nombre de Jardin: ")
+        FechaDesde = input("Ingrese Fecha desde: ")
+        FechaHasta = input("Ingrese Fecha hasta: ")
+        
+        largo = len(NombreJardin+FechaDesde+FechaHasta+opcion) + 10
+
+        message = '000{}asija {} {} {} {}'.format(largo,opcion,NombreJardin,FechaDesde,FechaHasta).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
     while True:
         # Look for the response
         
