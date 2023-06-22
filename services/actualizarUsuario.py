@@ -27,14 +27,16 @@ try:
             try:
                 opcion = data[1]
                 Nombre = data[2]
-                Apellido = data[3]
-                Rut = data[4]
-                Email = data[5]
-                Contrasena = data[6]
+                Rut = data[3]
+                Email = data[4]
+                Contrasena = data[5]
+                Telefono = data[6]
+                Rol = data[7]
+                Jardin = data[8]
 
-                largo = len(Nombre+Apellido+Rut+Email+Contrasena+opcion) + 14
+                largo = len(Nombre+Rut+Email+Contrasena+Telefono+Rol+Jardin+opcion) + 16
 
-                message = '000{}datos {} {} {} {} {} {}'.format(largo,Nombre,Apellido,Rut,Email,Contrasena,opcion).encode()
+                message = '000{}datos {} {} {} {} {} {} {} {}'.format(largo,opcion,Nombre,Rut,Email,Contrasena,Telefono,Rol,Jardin).encode()
                 print ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
                 if sock.recv(4096):

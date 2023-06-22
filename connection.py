@@ -220,27 +220,43 @@ def eliminarUsuario(Rut):
             print(f'El usuario {Rut} se ha eliminado correctamente')
     except sqlite3.Error as error:
         print("Error al eliminar el usuario:", error)
+
 #ActualizarUsuario
-def actualizarUsuario(userID,Nombre, Apellido, Rut, Correo, Contrasena):
+def actualizarUsuario(Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin):
+    ver = True
     try:
         cursor.execute("""
-            SELECT COUNT(*) FROM Usuario WHERE userID = ?
-        """, (userID,))
+            SELECT COUNT(*) FROM Usuarios WHERE Rut = ?
+        """, (Rut,))
         count_usuario = cursor.fetchone()[0]
 
+        #Verificamos Jardin
+        cursor.execute("""
+            SELECT COUNT(*) FROM Jardin WHERE NombreJardin = ?
+        """, (Jardin,))
+
+        count_jardin = cursor.fetchone()[0]
+
         if count_usuario < 1:
-            print("El ID de usuario no es valido.")
-        else:
+            print("El Rut de usuario no es valido.")
+            ver = False
+        if count_jardin < 1:
+            print("El jardin no existe.")
+            ver = False
+
+        if ver == True:
             cursor.execute("""
-                UPDATE Usuario SET Nombre = ?, Apellido = ?, Rut = ?, Correo = ?, Contrasena = ?
-                WHERE userID = ?
-            """, (Nombre, Apellido, Rut, Correo, Contrasena, userID))
+                UPDATE Usuarios SET Nombre = ?, Correo = ?, Contrasena = ?, Telefono = ?, Rol = ?, Jardin = ? WHERE Rut = ?
+            """, (Nombre, Correo, Contrasena, Telefono, Rol, Jardin, Rut))
             conn.commit()
-            print("Usuario actualizado con éxito.")
+            print("Datos actualizados correctamente")
+
     except sqlite3.Error as error:
         print("Error al actualizar el usuario:", error)
-#Registrar Personial
-def registrarPersonal(Nombre, Rut, Correo, Contrasena, Telefono, Rol , Jardin ):
+
+       
+def registrarPersonal(Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento):
+    val = True
     try:
         #Reviso que exista un persona con ese rut
         cursor.execute("""
@@ -253,20 +269,22 @@ def registrarPersonal(Nombre, Rut, Correo, Contrasena, Telefono, Rol , Jardin ):
         """, (Jardin,))
         count_jardin = cursor.fetchone()[0]
 
-        if count_personal > 0  and count_jardin > 0:
+        if count_personal > 0 :
             print("El rut ya se encuentra registrado.")
-        elif count_jardin < 1:
+            val = False
+        if count_jardin < 1:
             print("El jardin no existe.")
-        else:
+            val = False
+        if val == True:
             cursor.execute("""
-                INSERT INTO Personal (Nombre, Rut, Correo, Contrasena, Telefono, Rol, NombreJardin)
-                VALUES (?, ?, ?, ?, ?, ?, ?);
-            """, (Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin))
+                INSERT INTO Personal (Rut, NombreJardin, Nombre, Apellido, Cargo, FechaNacimiento)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento))
             conn.commit()
-            print("Personal registrado con éxito.")
+            print("Personal registrado correctamente")
+
     except sqlite3.Error as error:
         print("Error al registrar el personal:", error)
-
 
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
@@ -424,30 +442,31 @@ try:
 
                 elif opcion =='12':
                     #ACTUALIZAR USUARIO
-                    Rut = data[2]
-                    Nombre = data[3]
-                    Aepllido = data[4]
+                    Nombre = data[2]
+                    Rut = data[3]
                     Correo = data[4]
                     Contrasena = data[5]
-                    
+                    Telefono = data[6]
+                    Rol = data[7]
+                    Jardin = data[8]
+
                     print('Actualizando Usuario...')
-                    actualizarUsuario(Rut,Nombre,Aepllido,Correo,Contrasena)
+                    actualizarUsuario(Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin)
                     message = '00015datosupdusrexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion =='13':
                     #REGISTRAR PERSONAL
-                    Nombre = data[2]
-                    Rut = data[3]
-                    Contrasena = data[4]
-                    Telefono = data[5]
+                    Rut = data[2]
+                    Jardin = data[3]
+                    Nombre = data[4]
+                    Apellido = data[5]
                     Cargo = data[6]
-                    Rol = data[7]
-                    Jardin = data[8]
+                    FechaNacimiento = data[7]
 
                     print('Registrando Personal...')
-                    registrarPersonal(Nombre,Rut,Contrasena,Telefono,Cargo,Rol,Jardin)
+                    registrarPersonal(Rut,Jardin,Nombre,Apellido,Cargo,FechaNacimiento)
                     message = '00015datosnewpexito'.encode()
                     print ('sending {!r}'.format (message))
                     sock.send(message)

@@ -24,18 +24,22 @@ try:
             data = data.decode().split()
             try:
                 opcion = data[1]
-                Nombre = data[2]
-                Apellido = data[3]
-                Rut = data[4]
-                Cargo = data[5]
-                FechaNacimiento = data[6]
-                Jardin = data[7]
+                Rut = data[2]
+                NombreJardin = data[3]
+                Nombre = data[4]
+                Apellido = data[5]
+                Cargo = data[6]
+                FechaNacimiento = data[7]
 
-                largo = len(Nombre+Apellido+Rut+Cargo+FechaNacimiento+Jardin+opcion) + 15
+                largo = len(Rut+NombreJardin+Nombre+Apellido+Cargo+FechaNacimiento+opcion) + 15
 
-                message = '000{}datos {} {} {} {} {} {} {}'.format(largo,Nombre,Apellido,Rut,Cargo,FechaNacimiento,Jardin,opcion).encode()
+                message = '000{}datos {} {} {} {} {} {} {}'.format(largo,opcion,Rut,NombreJardin,Nombre,Apellido,Cargo,FechaNacimiento).encode()
                 print ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
+                if sock.recv(4096):
+                    message = '00010newpeexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
             except:
                 pass
             print('-------------------------------')

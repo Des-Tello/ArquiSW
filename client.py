@@ -163,35 +163,32 @@ try:
     elif opcion == '12':
         Rut = input("Ingrese el RUT del usuario a actualizar: ")
         Nombre = input("Ingrese el nuevo nombre: ")
-        Apellido = input("Ingrese el nuevo apellido: ")
         Correo = input("Ingrese el nuevo correo: ")
         Contrasena = input("Ingrese la nueva contraseña: ")
+        Telefono = input("Ingrese el nuevo telefono: ")
+        Rol = input("Ingrese el nuevo rol: ")
+        Jardin = input("Ingrese el nuevo jardin: ")
 
-        largo = len( Nombre+Apellido+Rut+Correo+Contrasena ) + 14
+        largo = len( Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin ) + 16
 
-        message = '000{}updus {} {} {} {} {} {}'.format( largo,opcion,Nombre,Apellido,Rut,Correo,Contrasena ).encode()
+        message = '000{}updus {} {} {} {} {} {} {} {}'.format( largo,opcion,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin ).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
 
     #Registrar Personal - newpe
     elif opcion == '13':
-        Nombre = input("Ingrese el Nombre: ")
-        Apellido = input("Ingrese el Apellido: ")
-        Rut = input("Ingrese el Rut: ")
-        Cargo = input("Ingrese el Cargo: ")
-        FechaNacimiento = input("Ingrese el Rol: ")
-        Jardin = input("Ingrese el Jardin: ")
+        Rut = input("Ingrese el RUT del personal a registrar: ")
+        Jardin = input("Ingrese el nombre del jardin: ")
+        Nombre = input("Ingrese el nombre del personal: ")
+        Apellido = input("Ingrese el apellido del personal: ")
+        Cargo = input("Ingrese el cargo del personal: ")
+        FechaNacimiento = input("Ingrese la fecha de nacimiento del personal: ")
 
-        largo = len( Nombre+Apellido+Rut+Cargo+FechaNacimiento+Jardin+opcion ) + 16
+        largo = len( Rut+Jardin+Nombre+Apellido+Cargo+FechaNacimiento ) + 15
 
-        message = '000{}newpe {} {} {} {} {} {} {} {}'.format( largo,opcion,Nombre,Apellido,Rut,Cargo,FechaNacimiento,Jardin ).encode()
+        message = '000{}newpe {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Jardin,Nombre,Apellido,Cargo,FechaNacimiento ).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
-
-    data = sock.recv(1024).decode()
-    print('received {!r}'.format(data))
-    print ("Processing ...")
-    
     while True:
         # Look for the response
         
