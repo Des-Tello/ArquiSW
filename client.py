@@ -16,6 +16,10 @@ print("3 - Registro Alumno")
 print("4 - Actualización Alumno")
 print("5 - Borrar Alumno")
 print("6 - Control Asistencia")
+print("7 - Creacion Jardín")
+print("8 - Actualización Jardín")
+print("9 - Eliminar Jardín")
+print("10 - Estadísticas Jardín")
 opcion = input("¿Que desea hacer? ")
 try:
     # Login
@@ -96,6 +100,51 @@ try:
         message = '000{}conas {} {} {} {}'.format( largo,opcion,Rut,Fecha,Estado ).encode()
         print ('sending {!r}'.format (message))
         sock.sendall( message )
+
+    # Creacion Jardin - newja
+    elif opcion == '7':
+        Nombre = input("Ingrese el nombre del jardín a crear: ")
+        Direccion = input("Ingrese la dirección del jardín: ").replace(' ','-')
+        Telefono = input("Ingrese el numero de telefono asociado: +56 9")
+
+        largo = len(Nombre+Direccion+Telefono) + 12
+
+        message = '000{}newja {} {} {} {}'.format( largo,opcion,Nombre,Direccion,Telefono ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
+    # Actializar Jardin - updja
+    elif opcion == '8':
+        Nombre = input("Ingrese el nombre del jardín a actualizar: ")
+        Direccion = input("Ingrese la nueva dirección: ").replace(' ','-')
+        Telefono = input("Ingrese el nuevo numero de telefono: +56 9")
+
+        largo = len( Nombre+Direccion+Telefono ) + 12
+
+        message = '000{}updja {} {} {} {}'.format( largo,opcion,Nombre,Direccion,Telefono ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
+    # Eliminar Jardin - delja
+    elif opcion == '9':
+        Nombre = input("Ingrese el nombre del jardín a eliminar: ")
+
+        largo = len( Nombre ) + 10
+
+        message = '000{}delja {} {}'.format( largo,opcion,Nombre ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+    
+    # Estadisticas Jardin - estja
+    elif opcion == '10':
+        Nombre = input("Ingrese el nombre del jardín para consultar estadisticas: ")
+        
+        largo = len( Nombre ) + 10
+
+        message = '000{}estja {} {}'.format( largo,opcion,Nombre ).encode()
+        print ('sending {!r}'.format (message))
+        sock.sendall( message )
+
 
     data = sock.recv(1024).decode()
     print('received {!r}'.format(data))

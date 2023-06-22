@@ -90,7 +90,7 @@ def controlAsistencia(PersonaRut,Fecha,Estado):
     conn.commit()
     print("Asistencia registrada con éxito.")
 
-def ceacionJardin(Nombre, Direccion, Telefono):
+def creacionJardin(Nombre, Direccion, Telefono):
     cursor.execute("""
         SELECT COUNT(*) FROM Jardin WHERE nombre = ?
     """,(Nombre,))
@@ -258,15 +258,47 @@ try:
 
                 if opcion == '7':
                     # CREAR JARDIN
-                
+                    Nombre = data[2]
+                    Direccion = data[3]
+                    Telefono = data[4]
+
+                    print('Creacion Jardin...')
+                    creacionJardin(Nombre,Direccion,Telefono)
+                    message = '00015datosnewjaexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
+
                 if opcion == '8':
                     # ACTUALIZAR JARDIN
+                    Nombre = data[2]
+                    Direccion = data[3]
+                    Telefono = data[4]
+
+                    print('Actualizando Jardin...')
+                    actualizarJardin(Nombre,Direccion,Telefono)
+                    message = '00015datosupdjaexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)        
 
                 if opcion == '9':
                     # ELIMINAR JARDIN
+                    Nombre = data[2]
+
+                    print('Eliminando Jardin...')
+                    eliminarJardin(Nombre)
+                    message = '00015datosdeljaexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
 
                 if opcion == '10':
                     # ESTADISTICAS JARDIN
+                    Nombre = data[2]
+
+                    print('Obteniendo estadisticas de Jardin...')
+                    estadisticasJardin(Nombre)
+                    message = '00015datosestjaexito'.encode()
+                    print ('sending {!r}'.format (message))
+                    sock.send(message)
 
             except:
                 pass
