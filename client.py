@@ -103,9 +103,9 @@ try:
 
     # Creacion Jardin - newja
     elif opcion == '7':
-        Nombre = input("Ingrese el nombre del jardín a crear: ")
+        Nombre = input("Ingrese el nombre del jardín a crear: ").replace(' ','-')
         Direccion = input("Ingrese la dirección del jardín: ").replace(' ','-')
-        Telefono = input("Ingrese el numero de telefono asociado: +56 9")
+        Telefono = input("Ingrese el numero de telefono asociado: +56 9 ")
 
         largo = len(Nombre+Direccion+Telefono) + 12
 

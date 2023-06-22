@@ -91,18 +91,21 @@ def controlAsistencia(PersonaRut,Fecha,Estado):
     print("Asistencia registrada con éxito.")
 
 def creacionJardin(Nombre, Direccion, Telefono):
-    cursor.execute("""
-        SELECT COUNT(*) FROM Jardin WHERE nombre = ?
-    """,(Nombre,))
-    existe = cursor.fetchone()[0]
-    if existe == 0:
-        cursor.execute(""""
-            INSERT INTO Jardin (Nombre, Direccion, Telefono) VALUES ( ?, ?, ?)
-        """, (Nombre, Direccion, Telefono))
-        conn.commit()
-        print("Jardin creado correctamente")
-    else:
-        print(f"El jardin {Nombre} ya está registrado")
+    try:
+        cursor.execute("""
+            SELECT COUNT(*) FROM Jardin WHERE nombre = ?
+        """,(Nombre,))
+        existe = cursor.fetchone()[0]
+        if existe == 0:
+            cursor.execute("""
+                INSERT INTO Jardin (Nombre, Direccion, Telefono) VALUES (?, ?, ?)
+            """, (Nombre, Direccion, Telefono))
+            conn.commit()
+            print("Jardin creado correctamente")
+        else:
+            print(f"El jardin {Nombre} ya está registrado")
+    except sqlite3.Error as error:
+        print(error)
 
 def actualizarJardin(Nombre, Direccion, Telefono):
     cursor.execute("""
@@ -119,19 +122,21 @@ def actualizarJardin(Nombre, Direccion, Telefono):
         print("Datos actualizados correctamente")
 
 def eliminarJardin(Nombre):
-    cursor.execute("""
-    SELECT COUNT(*) FROM Jardin WHERE nombre = ?
-    """,(Nombre,))
-    existe = cursor.fetchone()[0]
-    if existe == 0:
-        print(f"El jardin {Nombre} no existe en la base de datos")
-    else:
-        cursor.execute(""""
-            DELETE FROM Jardin WHERE nombre = ?
-        """, (Nombre,))
-        conn.commit()
-        print(f"El jardin {Nombre} se ha eliminado correctamente")
-
+    try:
+        cursor.execute("""
+        SELECT COUNT(*) FROM Jardin WHERE nombre = ?
+        """,(Nombre,))
+        existe = cursor.fetchone()[0]
+        if existe == 0:
+            print(f"El jardin {Nombre} no existe en la base de datos")
+        else:
+            cursor.execute("""
+                DELETE FROM Jardin WHERE nombre = ?
+            """, (Nombre,))
+            conn.commit()
+            print(f"El jardin {Nombre} se ha eliminado correctamente")
+    except sqlite3.Error as error:
+        print("Error al crear el jardín:", error)
 def estadisticasJardin(Nombre):
     cursor.execute("""
         SELECT JardinID FROM Jardin WHERE nombre = ?
@@ -194,7 +199,7 @@ try:
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
-                if opcion == '2':
+                elif opcion == '2':
                     Nombre = data[2]
                     Rut = data[3]
                     Correo = data[4]
@@ -208,7 +213,7 @@ try:
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
-                if opcion == '3':
+                elif opcion == '3':
                     Rut = data[2]
                     Nombre = data[3]
                     Apellido = data[4]
@@ -222,7 +227,7 @@ try:
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
-                if opcion == '4':
+                elif opcion == '4':
                     Rut = data[2]
                     Nombre = data[3]
                     Apellido = data[4]
@@ -236,7 +241,7 @@ try:
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
-                if opcion == '5':
+                elif opcion == '5':
                     Rut = data[2]
 
                     print('Borrando Alumno...')
@@ -245,7 +250,7 @@ try:
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
-                if opcion == '6':
+                elif opcion == '6':
                     PersonaRut = data[2]
                     Fecha = data[3]
                     Estado = data[4]
@@ -256,7 +261,7 @@ try:
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
-                if opcion == '7':
+                elif opcion == '7':
                     # CREAR JARDIN
                     Nombre = data[2]
                     Direccion = data[3]
@@ -268,7 +273,7 @@ try:
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
-                if opcion == '8':
+                elif opcion == '8':
                     # ACTUALIZAR JARDIN
                     Nombre = data[2]
                     Direccion = data[3]
@@ -280,7 +285,7 @@ try:
                     print ('sending {!r}'.format (message))
                     sock.send(message)        
 
-                if opcion == '9':
+                elif opcion == '9':
                     # ELIMINAR JARDIN
                     Nombre = data[2]
 
@@ -290,7 +295,7 @@ try:
                     print ('sending {!r}'.format (message))
                     sock.send(message)
 
-                if opcion == '10':
+                elif opcion == '10':
                     # ESTADISTICAS JARDIN
                     Nombre = data[2]
 
