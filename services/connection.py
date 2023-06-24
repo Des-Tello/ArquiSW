@@ -530,6 +530,18 @@ try:
                     sock.send(message)
 
                 elif opcion == '14':
+                    #   Asistencia por Jardin
+                    NombreJardin = data[2]
+                    FechaDesde = data[3]
+                    FechaHasta = data[4]
+
+                    logging.info('Visualizando asistencias ...')
+                    asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta)
+                    message = '00015datosasipeexito'.encode()
+                    logging.info ('sending {!r}'.format (message))
+                    sock.send(message)
+
+                elif opcion == '15':
                     #   COMPARACIÓN ASISTENCIA
                     NivelEducativo1 = data[2]
                     NivelEducativo2 = data[3]
@@ -543,7 +555,7 @@ try:
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
-                elif opcion == '15':
+                elif opcion == '16':
                     #   Visualizacion ASISTENCIA por personal
                     PersonalID = data[2]
                     Fecha = data[3]
@@ -554,17 +566,7 @@ try:
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
-                elif opcion == '16':
-                    #   Asistencia por Jardin
-                    NombreJardin = data[2]
-                    FechaDesde = data[3]
-                    FechaHasta = data[4]
-
-                    logging.info('Visualizando asistencias ...')
-                    asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta)
-                    message = '00015datosasipeexito'.encode()
-                    logging.info ('sending {!r}'.format (message))
-                    sock.send(message)
+                
 
             except:
                 pass
