@@ -1,7 +1,11 @@
 import sqlite3
 import socket
 import sys
-init_sql_file = "./db/init.sql"
+import logging
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
+init_sql_file = "/home/users/rodrigo.ordenes/ArquiSW/db/init.sql"
 
 def read_init_sql(file_path):
     with open(file_path, "r") as sql_file:
@@ -15,14 +19,14 @@ def registro(nombre, rut, correo, contrasena, telefono, rol, jardin):
     count = cursor.fetchone()[0]
     
     if count > 0:
-        print("El usuario ya está registrado.")
+        logging.info("El usuario ya está registrado.")
     else:
         cursor.execute("""
             INSERT INTO Usuarios (Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (nombre, rut, correo, contrasena, telefono, rol, jardin))
         conn.commit()
-        print("Usuario registrado con éxito.")
+        logging.info("Usuario registrado con éxito.")
 
 def login(rut, contrasena):
     cursor.execute("""
@@ -31,7 +35,7 @@ def login(rut, contrasena):
     rows = cursor.fetchall()
 
     if len(rows) > 0:
-        print("Login Exitoso.")
+        logging.info("Login Exitoso.")
 
 def registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     cursor.execute("""
@@ -50,18 +54,18 @@ def registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     count_curso = cursor.fetchone()[0]
     
     if count_alumno > 0:
-        print("El alumno ya está registrado.")
+        logging.info("El alumno ya está registrado.")
     elif count_jardin < 1:
-        print("El jardín no existe.")
+        logging.info("El jardín no existe.")
     # elif count_curso < 1:
-    #     print("El curso no existe en el jardín asociado.")
+    #     logging.info("El curso no existe en el jardín asociado.")
     else:
         cursor.execute("""
             INSERT INTO ALUMNO (Rut, Nombre, Apellido, FechaNacimiento, NombreJardin, CursoID)
             VALUES (?, ?, ?, ?, ?, ?)
         """, (Rut, Nombre, Apellido, FechaNacimiento, NombreJardin, CursoID))
         conn.commit()
-        print("Alumno registrado con éxito.")
+        logging.info("Alumno registrado con éxito.")
 
 def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     cursor.execute("""
@@ -80,11 +84,11 @@ def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     count_curso = cursor.fetchone()[0]
     
     if count_alumno < 1:
-        print("Alumno no existente.")
+        logging.info("Alumno no existente.")
     elif count_jardin < 1:
-        print("El jardín no existe.")
+        logging.info("El jardín no existe.")
     # elif count_curso < 1:
-    #     print("El curso no existe en el jardín asociado.")
+    #     logging.info("El curso no existe en el jardín asociado.")
     else:
         cursor.execute("""
             UPDATE ALUMNO 
@@ -92,7 +96,7 @@ def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
             WHERE Rut = ?
         """, (CursoID, NombreJardin, Nombre, Apellido, FechaNacimiento, Rut))
         conn.commit()
-        print("Alumno actualizado con éxito.")
+        logging.info("Alumno actualizado con éxito.")
         
 def borrarAlumno(Rut):
     cursor.execute("""
@@ -106,9 +110,9 @@ def borrarAlumno(Rut):
             WHERE Rut = ?
         """, (Rut,))
         conn.commit()
-        print("Alumno borrado con éxito.")
+        logging.info("Alumno borrado con éxito.")
     else:
-        print("No hay ningun alumno existente.")
+        logging.info("No hay ningun alumno existente.")
         
 def controlAsistencia(PersonaRut,Fecha,Estado):
     cursor.execute("""
@@ -122,14 +126,14 @@ def controlAsistencia(PersonaRut,Fecha,Estado):
     count_personal = cursor.fetchone()[0]
 
     if count_alumno < 1 and count_personal < 1:
-        print("No se ha encontrado ningun rut asociado")
+        logging.info("No se ha encontrado ningun rut asociado")
     else:
         cursor.execute("""
             INSERT INTO ASISTENCIA (PersonaRut, Fecha, Estado)
             VALUES (?, ?, ?);
         """, (PersonaRut, Fecha, Estado))
         conn.commit()
-        print("Asistencia registrada con éxito.")
+        logging.info("Asistencia registrada con éxito.")
 
 def creacionJardin(NombreJardin, Direccion, Telefono):
     try:
@@ -142,11 +146,11 @@ def creacionJardin(NombreJardin, Direccion, Telefono):
                 INSERT INTO Jardin (NombreJardin, Direccion, Telefono) VALUES (?, ?, ?)
             """, (NombreJardin, Direccion, Telefono))
             conn.commit()
-            print("Jardin creado correctamente")
+            logging.info("Jardin creado correctamente")
         else:
-            print(f"El jardin {NombreJardin} ya está registrado")
+            logging.info(f"El jardin {NombreJardin} ya está registrado")
     except sqlite3.Error as error:
-        print(error)
+        logging.info(error)
 
 def actualizarJardin(Nombre1, Nombre2, Direccion, Telefono):
     cursor.execute("""
@@ -154,13 +158,13 @@ def actualizarJardin(Nombre1, Nombre2, Direccion, Telefono):
     """,(Nombre1,))
     existe = cursor.fetchone()[0]
     if existe == 0:
-        print(f"El jardin {Nombre1} no existe en la base de datos")
+        logging.info(f"El jardin {Nombre1} no existe en la base de datos")
     else:
         cursor.execute("""
             UPDATE Jardin SET NombreJardin = ?, Direccion = ?, telefono = ? WHERE NombreJardin = ?
         """, (Nombre2, Direccion, Telefono, Nombre1))
         conn.commit()
-        print("Datos actualizados correctamente")
+        logging.info("Datos actualizados correctamente")
 
 def eliminarJardin(Nombre):
     try:
@@ -169,15 +173,15 @@ def eliminarJardin(Nombre):
         """,(Nombre,))
         existe = cursor.fetchone()[0]
         if existe == 0:
-            print(f"El jardin {Nombre} no existe en la base de datos")
+            logging.info(f"El jardin {Nombre} no existe en la base de datos")
         else:
             cursor.execute("""
                 DELETE FROM Jardin WHERE NombreJardin = ?
             """, (Nombre,))
             conn.commit()
-            print(f"El jardin {Nombre} se ha eliminado correctamente")
+            logging.info(f"El jardin {Nombre} se ha eliminado correctamente")
     except sqlite3.Error as error:
-        print("Error al eliminar el jardín:", error)
+        logging.info("Error al eliminar el jardín:", error)
         
 def estadisticasJardin(Nombre):
     cursor.execute("""
@@ -186,7 +190,7 @@ def estadisticasJardin(Nombre):
     count_jardin = cursor.fetchone()[0]
 
     if count_jardin < 1:
-        print("El jardin no existe.")
+        logging.info("El jardin no existe.")
     else:
         # JardinID = resultado[0]
         cursor.execute("""
@@ -199,9 +203,9 @@ def estadisticasJardin(Nombre):
         """,(Nombre,))
         Npersonal = cursor.fetchone()[0]
 
-        print(f"El jardin {Nombre} tiene:")
-        print(f"{Nalumnos} alumnos registrados")
-        print(f"{Npersonal} trabajadores registrados")
+        logging.info(f"El jardin {Nombre} tiene:")
+        logging.info(f"{Nalumnos} alumnos registrados")
+        logging.info(f"{Npersonal} trabajadores registrados")
 
 def eliminarUsuario(Rut):
     try:
@@ -211,15 +215,15 @@ def eliminarUsuario(Rut):
         count_usuario = cursor.fetchone()[0]
 
         if count_usuario < 1:
-            print("El usuario no existe.")
+            logging.info("El usuario no existe.")
         else:
             cursor.execute("""
                 DELETE FROM Usuarios WHERE Rut = ?
             """, (Rut,))
             conn.commit()
-            print(f'El usuario {Rut} se ha eliminado correctamente')
+            logging.info(f'El usuario {Rut} se ha eliminado correctamente')
     except sqlite3.Error as error:
-        print("Error al eliminar el usuario:", error)
+        logging.info("Error al eliminar el usuario:", error)
 
 #ActualizarUsuario
 def actualizarUsuario(Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin):
@@ -238,10 +242,10 @@ def actualizarUsuario(Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin):
         count_jardin = cursor.fetchone()[0]
 
         if count_usuario < 1:
-            print("El Rut de usuario no es valido.")
+            logging.info("El Rut de usuario no es valido.")
             ver = False
         if count_jardin < 1:
-            print("El jardin no existe.")
+            logging.info("El jardin no existe.")
             ver = False
 
         if ver == True:
@@ -249,10 +253,10 @@ def actualizarUsuario(Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin):
                 UPDATE Usuarios SET Nombre = ?, Correo = ?, Contrasena = ?, Telefono = ?, Rol = ?, Jardin = ? WHERE Rut = ?
             """, (Nombre, Correo, Contrasena, Telefono, Rol, Jardin, Rut))
             conn.commit()
-            print("Datos actualizados correctamente")
+            logging.info("Datos actualizados correctamente")
 
     except sqlite3.Error as error:
-        print("Error al actualizar el usuario:", error)
+        logging.info("Error al actualizar el usuario:", error)
 
        
 def registrarPersonal(Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento):
@@ -270,10 +274,10 @@ def registrarPersonal(Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento):
         count_jardin = cursor.fetchone()[0]
 
         if count_personal > 0 :
-            print("El rut ya se encuentra registrado.")
+            logging.info("El rut ya se encuentra registrado.")
             val = False
         if count_jardin < 1:
-            print("El jardin no existe.")
+            logging.info("El jardin no existe.")
             val = False
         if val == True:
             cursor.execute("""
@@ -281,10 +285,10 @@ def registrarPersonal(Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento):
                 VALUES (?, ?, ?, ?, ?, ?)
             """, (Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento))
             conn.commit()
-            print("Personal registrado correctamente")
+            logging.info("Personal registrado correctamente")
 
     except sqlite3.Error as error:
-        print("Error al registrar el personal:", error)
+        logging.info("Error al registrar el personal:", error)
 
 def comparacionAsistencia(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta):
     try:
@@ -298,11 +302,11 @@ def comparacionAsistencia(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta)
         """,(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta,))
         conn.commit()
         Npersonal = cursor.fetchall()
-        print("Comparación de Asistencia a continuación.")
+        logging.info("Comparación de Asistencia a continuación.")
         #Npersonal = cursor.fetchall()
-        print(Npersonal)
+        logging.info(Npersonal)
     except sqlite3.Error as error:
-        print("Error al comparar asistencia:", error)
+        logging.info("Error al comparar asistencia:", error)
 
 def visualizacionAsistenciaPersonal(PersonalID,Fecha):
     try:
@@ -319,10 +323,10 @@ def visualizacionAsistenciaPersonal(PersonalID,Fecha):
         Npersonal = cursor.fetchall()
 
         #Npersonal = cursor.fetchall()
-        print("Visualización Asistencia de Personal a continuación.")
-        print(Npersonal)
+        logging.info("Visualización Asistencia de Personal a continuación.")
+        logging.info(Npersonal)
     except sqlite3.Error as error:
-        print("Error al visualizar asistencias de personal:", error)
+        logging.info("Error al visualizar asistencias de personal:", error)
 
 def asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta):
     try:
@@ -335,12 +339,12 @@ def asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta):
         Npersonal = cursor.fetchall()
 
         #Npersonal = cursor.fetchall()
-        print("Asistencia por Jardin a continuación.")
-        print(Npersonal)
+        logging.info("Asistencia por Jardin a continuación.")
+        logging.info(Npersonal)
     except sqlite3.Error as error:
-        print("Error al revisar las asistencias por jardín:", error)
+        logging.info("Error al revisar las asistencias por jardín:", error)
 
-conn = sqlite3.connect("database.db")
+conn = sqlite3.connect("/home/users/rodrigo.ordenes/ArquiSW/services/database.db")
 cursor = conn.cursor()
 
 read_init_sql(init_sql_file)
@@ -348,33 +352,33 @@ read_init_sql(init_sql_file)
 sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
 
 server_address = ('localhost', 5000)
-print ('connecting to {} port {}'.format (*server_address))
+logging.info ('connecting to {} port {}'.format (*server_address))
 sock.connect (server_address)
 try:
     # Send data
     message = b'00010sinitdatos'
-    print ('sending {!r}'.format (message))
+    logging.info ('sending {!r}'.format (message))
     sock.sendall (message)
     while True:
         # Look for the response
-        print ("Waiting for transaction BBDD")
+        logging.info ("Waiting for transaction BBDD")
         amount_received = 0
         amount_expected = int(sock.recv (5))
         while amount_received < amount_expected:
             data = sock.recv (amount_expected - amount_received)
             amount_received += len (data)
-            print('received {!r}'.format(data))
-            print ("Processing sql...")
+            logging.info('received {!r}'.format(data))
+            logging.info ("Processing sql...")
             try:
                 data = data.decode().split()
                 opcion = data[1]
                 if opcion == '1':
                     Rut = data[2]
                     Contrasena = data[2]
-                    print('Ingresando...')
+                    logging.info('Ingresando...')
                     login(Rut,Contrasena)
                     message = '00015datosloginexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '2':
@@ -385,10 +389,10 @@ try:
                     Telefono = data[6]
                     Rol = data[7]
                     Jardin = data[8]
-                    print('Registrando...')
+                    logging.info('Registrando...')
                     registro(Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin)
                     message = '00015datosregisexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '3':
@@ -399,10 +403,10 @@ try:
                     NombreJardin = data[6]
                     CursoID = data[7]
 
-                    print('Registrando Alumno...')
+                    logging.info('Registrando Alumno...')
                     registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID)
                     message = '00015datosnewalexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '4':
@@ -413,19 +417,19 @@ try:
                     NombreJardin = data[6]
                     CursoID = data[7]
 
-                    print('Actualizando Alumno...')
+                    logging.info('Actualizando Alumno...')
                     actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID)
                     message = '00015datosupdalexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '5':
                     Rut = data[2]
 
-                    print('Borrando Alumno...')
+                    logging.info('Borrando Alumno...')
                     borrarAlumno( Rut )
                     message = '00015datosdelalexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '6':
@@ -433,10 +437,10 @@ try:
                     Fecha = data[3]
                     Estado = data[4]
 
-                    print('Asistencia Alumno...')
+                    logging.info('Asistencia Alumno...')
                     controlAsistencia(PersonaRut,Fecha,Estado)
                     message = '00015datosconasexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '7':
@@ -445,10 +449,10 @@ try:
                     Direccion = data[3]
                     Telefono = data[4]
 
-                    print('Creacion Jardin...')
+                    logging.info('Creacion Jardin...')
                     creacionJardin(Nombre,Direccion,Telefono)
                     message = '00015datosnewjaexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '8':
@@ -458,40 +462,40 @@ try:
                     Direccion = data[4]
                     Telefono = data[5]
 
-                    print('Actualizando Jardin...')
+                    logging.info('Actualizando Jardin...')
                     actualizarJardin(Nombre1,Nombre2,Direccion,Telefono)
                     message = '00015datosupdjaexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)        
 
                 elif opcion == '9':
                     # ELIMINAR JARDIN
                     Nombre = data[2]
 
-                    print('Eliminando Jardin...')
+                    logging.info('Eliminando Jardin...')
                     eliminarJardin(Nombre)
                     message = '00015datosdeljaexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '10':
                     # ESTADISTICAS JARDIN
                     Nombre = data[2]
 
-                    print('Obteniendo estadisticas de Jardin...')
+                    logging.info('Obteniendo estadisticas de Jardin...')
                     estadisticasJardin(Nombre)
                     message = '00015datosestjaexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
                 
                 elif opcion =='11':
                     #ELIMINAR USUARIO
                     Rut = data[2]
 
-                    print('Eliminando Usuario...')
+                    logging.info('Eliminando Usuario...')
                     eliminarUsuario(Rut)
                     message = '00015datosdelusrexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion =='12':
@@ -504,10 +508,10 @@ try:
                     Rol = data[7]
                     Jardin = data[8]
 
-                    print('Actualizando Usuario...')
+                    logging.info('Actualizando Usuario...')
                     actualizarUsuario(Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin)
                     message = '00015datosupdusrexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion =='13':
@@ -519,10 +523,10 @@ try:
                     Cargo = data[6]
                     FechaNacimiento = data[7]
 
-                    print('Registrando Personal...')
+                    logging.info('Registrando Personal...')
                     registrarPersonal(Rut,Jardin,Nombre,Apellido,Cargo,FechaNacimiento)
                     message = '00015datosnewpexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '14':
@@ -533,10 +537,10 @@ try:
                     FechaHasta = data[5]
 
 
-                    print('Comparando asistencias ...')
+                    logging.info('Comparando asistencias ...')
                     comparacionAsistencia(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta)
                     message = '00015datoscomasexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '15':
@@ -544,10 +548,10 @@ try:
                     PersonalID = data[2]
                     Fecha = data[3]
 
-                    print('Visualizando asistencias ...')
+                    logging.info('Visualizando asistencias ...')
                     visualizacionAsistenciaPersonal(PersonalID,Fecha)
                     message = '00015datosasipeexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '16':
@@ -556,19 +560,19 @@ try:
                     FechaDesde = data[3]
                     FechaHasta = data[4]
 
-                    print('Visualizando asistencias ...')
+                    logging.info('Visualizando asistencias ...')
                     asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta)
                     message = '00015datosasipeexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
             except:
                 pass
-            print('-------------------------------')
+            logging.info('-------------------------------')
             
 
 finally:
-    print ('closing socket')
+    logging.info ('closing socket')
     sock.close ()
 
 conn.commit()

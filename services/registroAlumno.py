@@ -1,26 +1,30 @@
 import socket
 import sys
+import logging
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
 # Create a TCP/IP socket
 sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
 # Connect the socket to the port where the server is listening
 server_address = ('localhost', 5000)
-print ('connecting to {} port {}'.format (*server_address))
+logging.info ('connecting to {} port {}'.format (*server_address))
 sock.connect (server_address)
 try:
     # Send data
     message = b'00010sinitnewal'
-    print ('sending {!r}'.format (message))
+    logging.info ('sending {!r}'.format (message))
     sock.sendall (message)
     while True:
         # Look for the response
-        print ("Waiting for register transaction")
+        logging.info ("Waiting for register transaction")
         amount_received = 0
         amount_expected = int(sock.recv(5))
         while amount_received < amount_expected:
             data = sock.recv (amount_expected - amount_received)
             amount_received += len (data)
-            print('received {!r}'.format(data))
-            print ("Registrando Alumno...")
+            logging.info('received {!r}'.format(data))
+            logging.info ("Registrando Alumno...")
             data = data.decode().split()
             try:
                 opcion = data[1]
@@ -33,16 +37,16 @@ try:
                 
                 largo = len(Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID+opcion) + 13
                 message = '000{}datos {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID).encode()
-                print ('sending to bbdd {!r}'.format (message))
+                logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
                 if sock.recv(4096):
                     message = '00010newalexito'.encode()
-                    print ('sending {!r}'.format (message))
+                    logging.info ('sending {!r}'.format (message))
                     sock.send(message)
             except:
                 pass
-            print('-------------------------------')
+            logging.info('-------------------------------')
 
 finally:
-    print ('closing socket')
+    logging.info ('closing socket')
     sock.close ()
