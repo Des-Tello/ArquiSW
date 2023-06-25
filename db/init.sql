@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS Usuarios(
     Rol VARCHAR(100), 
     Jardin VARCHAR(100), 
     primary key(Rut)
+    foreign key (Rol) REFERENCES PRIVILEGIO(PrivilegioID)
 );
 
 CREATE TABLE IF NOT EXISTS CURSO (
@@ -54,8 +55,8 @@ CREATE TABLE IF NOT EXISTS ASISTENCIA (
 );
 
 CREATE TABLE IF NOT EXISTS PRIVILEGIO (
-    PrivilegioID INTEGER PRIMARY KEY,
-    Nombre INTEGER,
+    PrivilegioID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nombre TEXT,
     NivelPermiso INTEGER
 );
 

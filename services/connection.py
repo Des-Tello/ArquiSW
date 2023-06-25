@@ -30,12 +30,13 @@ def registro(nombre, rut, correo, contrasena, telefono, rol, jardin):
 
 def login(rut, contrasena):
     cursor.execute("""
-        SELECT COUNT(*) FROM Usuarios WHERE Rut = ? AND Contrasena = ?
+        SELECT Rol FROM Usuarios WHERE Rut = ? AND Contrasena = ?
     """, (rut, contrasena))
-    rows = cursor.fetchall()
+    rows = cursor.fetchone()[0]
 
     if len(rows) > 0:
         logging.info("Login Exitoso.")
+        return rows
 
 def registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     cursor.execute("""
@@ -225,7 +226,6 @@ def eliminarUsuario(Rut):
     except sqlite3.Error as error:
         logging.info("Error al eliminar el usuario:", error)
 
-#ActualizarUsuario
 def actualizarUsuario(Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin):
     ver = True
     try:
@@ -258,7 +258,6 @@ def actualizarUsuario(Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin):
     except sqlite3.Error as error:
         logging.info("Error al actualizar el usuario:", error)
 
-       
 def registrarPersonal(Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento):
     val = True
     try:
@@ -374,10 +373,11 @@ try:
                 opcion = data[1]
                 if opcion == '1':
                     Rut = data[2]
-                    Contrasena = data[2]
+                    Contrasena = data[3]
                     logging.info('Ingresando...')
-                    login(Rut,Contrasena)
-                    message = '00015datosloginexito'.encode()
+                    priv = login(Rut,Contrasena)
+                    print(priv)
+                    message = '00015datosloginexito {}'.format(priv).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
@@ -565,8 +565,6 @@ try:
                     message = '00015datosasipeexito'.encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
-
-                
 
             except:
                 pass

@@ -35,8 +35,9 @@ try:
                 message = '000{}datos {} {} {}'.format(largo,opcion,Rut,Contrasena).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
-                if sock.recv(4096):
-                    message = '00010loginexito'.encode()
+                algo = sock.recv(4096)
+                if algo:
+                    message = '00010loginexito {}'.format(algo.decode().split()[1]).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
             except:
