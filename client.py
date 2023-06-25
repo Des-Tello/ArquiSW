@@ -48,8 +48,10 @@ sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('localhost', 5000)
 print ('connecting to {} port {}'.format (*server_address))
 sock.connect (server_address)
+
 while True:
     print("Menu: ")
+    print("0 - Salir")
     print("1 - Login")
     print("2 - Registro Usuario")
     print("3 - Registro Alumno")
@@ -69,6 +71,8 @@ while True:
 
     opcion = input("¿Que desea hacer? ")
     try:
+        if opcion == '0':
+            print("Saliendo...")
         # Login
         if opcion == '1':
             Rut = obtenerRut()
@@ -148,7 +152,7 @@ while True:
 
         # Control Asistencia - conas
         elif opcion == '6':
-            Rut = input("Ingrese el rut del alumno o personal: ")
+            Rut = obtenerRut()
             Fecha = input("Ingrese la Fecha (YYYY-MM-DD): ")
             Estado = input("Asiste (1-SI 0-NO) ")
 
@@ -177,7 +181,7 @@ while True:
         # Actualizar Jardin - updja
         elif opcion == '8':
             Nombre1 = input("Ingrese el nombre del jardín a actualizar: ")
-            Nombre2 = input("Ingrese el nuevo nombre para este jardin: ")
+            Nombre2 = input("Ingrese el nuevo nombre para este jardin: ").replace(' ','-')
             Direccion = input("Ingrese la nueva dirección: ").replace(' ','-')
             Telefono = obtenerNumero()
 
@@ -191,7 +195,7 @@ while True:
 
         # Eliminar Jardin - delja
         elif opcion == '9':
-            Nombre = input("Ingrese el nombre del jardín a eliminar: ")
+            Nombre = input("Ingrese el nombre del jardín a eliminar: ").replace(' ','-')
 
             largo = len( Nombre ) + 10
 
@@ -203,7 +207,7 @@ while True:
 
         # Estadisticas Jardin - estja
         elif opcion == '10':
-            Nombre = input("Ingrese el nombre del jardín para consultar estadisticas: ")
+            Nombre = input("Ingrese el nombre del jardín para consultar estadisticas: ").replace(' ','-')
             
             largo = len( Nombre ) + 10
 
@@ -231,7 +235,7 @@ while True:
             Nombre = input("Ingrese el nuevo nombre: ")
             Correo = input("Ingrese el nuevo correo: ")
             Contrasena = input("Ingrese la nueva contraseña: ")
-            Telefono = input("Ingrese el nuevo telefono: ")
+            Telefono = obtenerNumero()
             Rol = input("Ingrese el nuevo rol: ")
             Jardin = input("Ingrese el nuevo jardin: ")
 
@@ -301,6 +305,8 @@ while True:
             sock.sendall( message )
             if respuesta():
                 print("Asistencia presentada en el servicio correspondiente")
+
     finally:
-        print ('closing socket')
+        
+        # print ('closing socket')
         sock.close ()
