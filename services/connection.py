@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-init_sql_file = "/home/users/rodrigo.ordenes/ArquiSW/db/init.sql"
+init_sql_file = "/home/users/benjamin.tello/software/db/init.sql"
 
 def read_init_sql(file_path):
     with open(file_path, "r") as sql_file:
@@ -344,7 +344,7 @@ def asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta):
     except sqlite3.Error as error:
         logging.info("Error al revisar las asistencias por jardín:", error)
 
-conn = sqlite3.connect("/home/users/rodrigo.ordenes/ArquiSW/services/database.db")
+conn = sqlite3.connect("/home/users/benjamin.tello/software/services/database.db")
 cursor = conn.cursor()
 
 read_init_sql(init_sql_file)
