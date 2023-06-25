@@ -2,6 +2,38 @@ import socket
 import time
 import sys
 
+def obtenerRut():
+    while True:
+        rut = input("Ingrese el Rut sin puntos y con guion: ")
+
+        rut = rut.lower()
+        rut = rut.replace(".", "")
+        rut = rut.replace("-", "")
+        cuerpo, dv = rut[:-1], rut[-1]
+        
+        if not cuerpo.isdigit() or dv not in '0123456789k':
+            print("* * * Ingrese un rut valido * * *")
+        else:
+            reverse_cuerpo = cuerpo[::-1]
+            factor = 2
+            suma = 0
+            for c in reverse_cuerpo:
+                suma += factor * int(c)
+                factor = factor + 1 if factor < 7 else 2
+
+            res = suma % 11
+            dvr = 'k' if 11 - res == 10 else str(11 - res)
+            if (dv == dvr):
+                return rut
+
+def obtenerNumero():
+    while True:
+        Telefono = input("Ingrese el numero telefonico: ")
+        if not Telefono.isdigit() and (len(Telefono)!=8):
+            print("* * * Porfavor ingrese un numero valido * * *")
+        else:
+            return Telefono
+
 # Create a TCP/IP socket
 sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
 # Connect the socket to the port where the server is listening
@@ -31,7 +63,7 @@ opcion = input("¿Que desea hacer? ")
 try:
     # Login
     if opcion == '1':
-        Rut = input("Ingrese el Rut:")
+        Rut = obtenerRut()
         Contrasena = input("Ingrese la Contrasena:")
 
         largo = len(Rut+Contrasena+opcion) + 13
@@ -43,10 +75,10 @@ try:
     # Registro
     elif opcion == '2':
         Nombre = input("Ingrese el Nombre:")
-        Rut = input("Ingrese el Rut:")
+        Rut = obtenerRut()
         Correo = input("Ingrese el Correo:")
         Contrasena = input("Ingrese la Contrasena:")
-        Telefono = input("Ingrese el Telefono :")
+        Telefono = obtenerNumero()
         Rol = input("Ingrese el Rol:")
         Jardin  = input("Ingrese el Jardin :")
 
@@ -58,7 +90,7 @@ try:
     
     # Registro Alumno - newal
     elif opcion == '3':
-        Rut = input("Ingrese el Rut: ")
+        Rut = obtenerRut()
         Nombre = input("Ingrese el Nombre: ")
         Apellido = input("Ingrese el Apellido: ")
         FechaNacimiento = input("Ingrese el Fecha de Nacimiento (YYYY-MM-DD): ")
@@ -73,7 +105,7 @@ try:
 
     # Actualización Alumno - updal
     elif opcion == '4':
-        Rut = input("Ingrese el Rut: ")
+        Rut = obtenerRut()
         Nombre = input("Ingrese el Nombre: ")
         Apellido = input("Ingrese el Apellido: ")
         FechaNacimiento = input("Ingrese el Fecha de Nacimiento (YYYY-MM-DD): ")
@@ -88,7 +120,7 @@ try:
 
     # Borrar Alumno - delal
     elif opcion == '5':
-        Rut = input("Ingrese el Rut: ")
+        Rut = obtenerRut()
 
         largo = len( Rut ) + 13
 
@@ -112,7 +144,7 @@ try:
     elif opcion == '7':
         NombreJardin = input("Ingrese el nombre del jardín a crear: ").replace(' ','-')
         Direccion = input("Ingrese la dirección del jardín: ").replace(' ','-')
-        Telefono = input("Ingrese el numero de telefono asociado: +56 9 ")
+        Telefono = obtenerNumero()
 
         largo = len(NombreJardin+Direccion+Telefono+opcion) + 12
 
@@ -125,7 +157,7 @@ try:
         Nombre1 = input("Ingrese el nombre del jardín a actualizar: ")
         Nombre2 = input("Ingrese el nuevo nombre para este jardin: ")
         Direccion = input("Ingrese la nueva dirección: ").replace(' ','-')
-        Telefono = input("Ingrese el nuevo numero de telefono: +56 9")
+        Telefono = obtenerNumero()
 
         largo = len( Nombre1+Nombre2+Direccion+Telefono ) + 13
 
@@ -155,7 +187,7 @@ try:
 
     #Eliminar usuario - delus
     elif opcion == '11': 
-        Rut = input("Ingrese el rut del usuario a eliminar: ")
+        Rut = obtenerRut()
 
         largo = len( Rut ) + 10
 
@@ -165,7 +197,7 @@ try:
 
     #Actualizacion de usuario - updus
     elif opcion == '12':
-        Rut = input("Ingrese el RUT del usuario a actualizar: ")
+        Rut = obtenerRut()
         Nombre = input("Ingrese el nuevo nombre: ")
         Correo = input("Ingrese el nuevo correo: ")
         Contrasena = input("Ingrese la nueva contraseña: ")
@@ -181,12 +213,12 @@ try:
 
     #Registrar Personal - newpe
     elif opcion == '13':
-        Rut = input("Ingrese el RUT del personal a registrar: ")
+        Rut = obtenerRut()
         Jardin = input("Ingrese el nombre del jardin: ")
         Nombre = input("Ingrese el nombre del personal: ")
         Apellido = input("Ingrese el apellido del personal: ")
         Cargo = input("Ingrese el cargo del personal: ")
-        FechaNacimiento = input("Ingrese la fecha de nacimiento del personal: ")
+        FechaNacimiento = input("Ingrese la fecha de nacimiento del personal (YYYY-MM-DD): ")
 
         largo = len( Rut+Jardin+Nombre+Apellido+Cargo+FechaNacimiento ) + 15
 
@@ -198,8 +230,8 @@ try:
     elif opcion == '14':
         NivelEducativo1 = input("Ingrese Nivel Educativo 1: ")
         NivelEducativo2 = input("Ingrese Nivel Educativo 2: ")
-        FechaDesde = input("Ingrese Fecha desde: ")
-        FechaHasta = input("Ingrese Fecha hasta: ")
+        FechaDesde = input("Ingrese Fecha desde (YYYY-MM-DD): ")
+        FechaHasta = input("Ingrese Fecha hasta (YYYY-MM-DD): ")
         
         largo = len(NivelEducativo1+NivelEducativo2+FechaDesde+FechaHasta+opcion) + 10
 
@@ -210,7 +242,7 @@ try:
     # Visualización Asistencia de Personal - asipe
     elif opcion == '15':
         PersonalID = input("Ingrese ID de Personal: ")
-        Fecha = input("Ingrese Fecha: ")
+        Fecha = input("Ingrese Fecha (YYYY-MM-DD): ")
         
         largo = len(PersonalID+Fecha+opcion) + 10
 
@@ -221,8 +253,8 @@ try:
     # Asistencia por jardin - asija
     elif opcion == '16':
         NombreJardin = input("Ingrese Nombre de Jardin: ")
-        FechaDesde = input("Ingrese Fecha desde: ")
-        FechaHasta = input("Ingrese Fecha hasta: ")
+        FechaDesde = input("Ingrese Fecha desde (YYYY-MM-DD): ")
+        FechaHasta = input("Ingrese Fecha hasta (YYYY-MM-DD): ")
         
         largo = len(NombreJardin+FechaDesde+FechaHasta+opcion) + 10
 
