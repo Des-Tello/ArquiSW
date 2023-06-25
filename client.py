@@ -42,14 +42,16 @@ def respuesta():
         return True
     return False
 
-# Create a TCP/IP socket
-sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
-# Connect the socket to the port where the server is listening
-server_address = ('localhost', 5000)
-print ('connecting to {} port {}'.format (*server_address))
-sock.connect (server_address)
+
 
 while True:
+    # Create a TCP/IP socket
+    sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+    # Connect the socket to the port where the server is listening
+    server_address = ('localhost', 5000)
+    print ('connecting to {} port {}'.format (*server_address))
+    sock.connect (server_address)
+
     print("Menu: ")
     print("0 - Salir")
     print("1 - Login")
@@ -306,7 +308,9 @@ while True:
             if respuesta():
                 print("Asistencia presentada en el servicio correspondiente")
 
+
     finally:
+        sock.close ()
         
         # print ('closing socket')
-        sock.close ()
+        
