@@ -1,6 +1,10 @@
 import socket
 import time
 import sys
+import logging
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
 
 def obtenerRut():
     while True:
@@ -55,6 +59,7 @@ def respuesta():
 def respuesta_registro_alumno():
     time.sleep(2)
     data = sock.recv(4096).decode()
+    print("hola")
     logging.info("Datos sexuales {!r}".format(data))
     print("Datos sexuales {!r}".format(data))
 

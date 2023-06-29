@@ -4,6 +4,18 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
+def respuesta_registro_alumno():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+    if 'exito' in data:
+        return 1
+    elif 'alumnoexistente' in data:
+        return 2
+    elif 'jardinnoexistente' in data:
+        return 3
+    else:
+        return 4
+
 # Create a TCP/IP socket
 sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
 # Connect the socket to the port where the server is listening
@@ -39,10 +51,16 @@ try:
                 message = '000{}datos {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
-                if sock.recv(4096):
+
+                result = respuesta_registro_alumno()
+                if result == 1:
                     message = '00010newalexito'.encode()
-                    logging.info ('sending {!r}'.format (message))
+                else:
+                    message = '00012newalfallido'.encode()
+
+                logging.info ('sending {!r}'.format (message))
                     sock.send(message)
+                    
             except:
                 pass
             logging.info('-------------------------------')

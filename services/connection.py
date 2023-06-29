@@ -56,8 +56,10 @@ def registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     
     if count_alumno > 0:
         logging.info("El alumno ya está registrado.")
+        return 2
     elif count_jardin < 1:
         logging.info("El jardín no existe.")
+        return 3
     # elif count_curso < 1:
     #     logging.info("El curso no existe en el jardín asociado.")
     else:
@@ -67,6 +69,8 @@ def registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
         """, (Rut, Nombre, Apellido, FechaNacimiento, NombreJardin, CursoID))
         conn.commit()
         logging.info("Alumno registrado con éxito.")
+        return 1
+    return False
 
 def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     cursor.execute("""
@@ -403,9 +407,18 @@ try:
                     NombreJardin = data[6]
                     CursoID = data[7]
 
-                    logging.info('Registrando Alumno...')
-                    registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID)
-                    message = '00015datosnewalexito'.encode()
+                    result = registroAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID)
+                    if result == 1:
+                        logging.info('Registrando Alumno...')
+                        message = '00015datosnewalexito'.encode()
+                    else:
+                        logging.info('Fallo en Registrar Alumno...')
+                        if result == 2:
+                            message = '00032datosnewalfallidoalumnoexistente'.encode()
+                        elif result == 3:
+                            message = '00034datosnewalfallidojardinnoexistente'.encode()
+                        else:
+                            message = '00021datosnewalfallidootro'.encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
