@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-init_sql_file = "/home/users/rodrigo.ordenes/ArquiSW/db/init.sql"
+init_sql_file = "/home/users/benjamin.tello/software/db/init.sql"
 
 def read_init_sql(file_path):
     with open(file_path, "r") as sql_file:
@@ -141,6 +141,7 @@ def controlAsistencia(PersonaRut,Fecha,Estado):
         logging.info("Asistencia registrada con éxito.")
 
 def creacionJardin(NombreJardin, Direccion, Telefono):
+    msg = ''
     try:
         cursor.execute("""
             SELECT COUNT(*) FROM Jardin WHERE NombreJardin = ?
@@ -151,51 +152,63 @@ def creacionJardin(NombreJardin, Direccion, Telefono):
                 INSERT INTO Jardin (NombreJardin, Direccion, Telefono) VALUES (?, ?, ?)
             """, (NombreJardin, Direccion, Telefono))
             conn.commit()
-            logging.info("Jardin creado correctamente")
+            # logging.info("Jardin creado correctamente")
+            msg = 'Jardin-creado-correctamente'
         else:
-            logging.info(f"El jardin {NombreJardin} ya está registrado")
+            # logging.info(f"El jardin {NombreJardin} ya está registrado")
+            msg = f'El-jardin-{NombreJardin}-ya-está-registrado'
     except sqlite3.Error as error:
         logging.info(error)
+    return msg
 
 def actualizarJardin(Nombre1, Nombre2, Direccion, Telefono):
+    msg = ''
     cursor.execute("""
     SELECT COUNT(*) FROM Jardin WHERE NombreJardin = ?
     """,(Nombre1,))
     existe = cursor.fetchone()[0]
     if existe == 0:
-        logging.info(f"El jardin {Nombre1} no existe en la base de datos")
+        # logging.info(f"El jardin {Nombre1} no existe en la base de datos")
+        msg = f"El-jardin-{Nombre1}-no-existe-en-la-base-de-datos"
     else:
         cursor.execute("""
             UPDATE Jardin SET NombreJardin = ?, Direccion = ?, telefono = ? WHERE NombreJardin = ?
         """, (Nombre2, Direccion, Telefono, Nombre1))
         conn.commit()
-        logging.info("Datos actualizados correctamente")
+        # logging.info("Datos actualizados correctamente")
+        msg = "Datos-actualizados-correctamente"
+    return msg
 
 def eliminarJardin(Nombre):
+    msg = ''
     try:
         cursor.execute("""
         SELECT COUNT(*) FROM Jardin WHERE NombreJardin = ?
         """,(Nombre,))
         existe = cursor.fetchone()[0]
         if existe == 0:
-            logging.info(f"El jardin {Nombre} no existe en la base de datos")
+            # logging.info(f"El jardin {Nombre} no existe en la base de datos")
+            msg = f'El-jardin-{Nombre}-no-existe-en-la-base-de-datos'
         else:
             cursor.execute("""
                 DELETE FROM Jardin WHERE NombreJardin = ?
             """, (Nombre,))
             conn.commit()
-            logging.info(f"El jardin {Nombre} se ha eliminado correctamente")
+            # logging.info(f"El jardin {Nombre} se ha eliminado correctamente")
+            msg = f'El-jardin-{Nombre}-se-ha-eliminado-correctamente'
     except sqlite3.Error as error:
         logging.info("Error al eliminar el jardín:", error)
-        
+    return msg
 def estadisticasJardin(Nombre):
+    msg = ""
     cursor.execute("""
         SELECT COUNT(*) FROM JARDIN WHERE NombreJardin = ?
     """, (Nombre,))
     count_jardin = cursor.fetchone()[0]
 
     if count_jardin < 1:
-        logging.info("El jardin no existe.")
+        # logging.info("El jardin no existe.")
+        msg = "El-jardin-no-existe"
     else:
         # JardinID = resultado[0]
         cursor.execute("""
@@ -207,10 +220,11 @@ def estadisticasJardin(Nombre):
             SELECT COUNT(*) FROM Personal WHERE NombreJardin = ?
         """,(Nombre,))
         Npersonal = cursor.fetchone()[0]
+        # logging.info(f"{Nalumnos} alumnos registrados")
+        # logging.info(f"{Npersonal} trabajadores registrados")
+        msg = f"Total:-{Nalumnos}-alumnos-registrados-{Npersonal}-trabajadores-registrados"
 
-        logging.info(f"El jardin {Nombre} tiene:")
-        logging.info(f"{Nalumnos} alumnos registrados")
-        logging.info(f"{Npersonal} trabajadores registrados")
+    return msg
 
 def eliminarUsuario(Rut):
     try:
@@ -347,7 +361,7 @@ def asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta):
     except sqlite3.Error as error:
         logging.info("Error al revisar las asistencias por jardín:", error)
 
-conn = sqlite3.connect("/home/users/rodrigo.ordenes/ArquiSW/services/database.db")
+conn = sqlite3.connect("/home/users/benjamin.tello/software/services/database.db")
 cursor = conn.cursor()
 
 read_init_sql(init_sql_file)
@@ -463,8 +477,9 @@ try:
                     Telefono = data[4]
 
                     logging.info('Creacion Jardin...')
-                    creacionJardin(Nombre,Direccion,Telefono)
-                    message = '00015datosnewjaexito'.encode()
+                    msg = creacionJardin(Nombre,Direccion,Telefono)
+                    largo = 16 + len(msg)
+                    message = '000{}datosnewjaexito {}'.format(largo,msg).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
@@ -476,8 +491,9 @@ try:
                     Telefono = data[5]
 
                     logging.info('Actualizando Jardin...')
-                    actualizarJardin(Nombre1,Nombre2,Direccion,Telefono)
-                    message = '00015datosupdjaexito'.encode()
+                    msg = actualizarJardin(Nombre1,Nombre2,Direccion,Telefono)
+                    largo = 16 + len(msg)
+                    message = '000{}datosupdjaexito {}'.format(largo, msg).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)        
 
@@ -486,8 +502,9 @@ try:
                     Nombre = data[2]
 
                     logging.info('Eliminando Jardin...')
-                    eliminarJardin(Nombre)
-                    message = '00015datosdeljaexito'.encode()
+                    msg = eliminarJardin(Nombre)
+                    largo = 16 + len(msg)
+                    message = '000{}datosdeljaexito {}'.format(largo,msg).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
@@ -496,8 +513,9 @@ try:
                     Nombre = data[2]
 
                     logging.info('Obteniendo estadisticas de Jardin...')
-                    estadisticasJardin(Nombre)
-                    message = '00015datosestjaexito'.encode()
+                    msg = estadisticasJardin(Nombre)
+                    largo = 16 + len(msg)
+                    message = '000{}datosestjaexito {}'.format(largo,msg).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
                 

@@ -34,8 +34,12 @@ try:
                 message = '000{}datos {} {}'.format(largo,opcion,Nombre).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
-                if sock.recv(4096):
-                    message = '00010deljaexito'.encode()
+
+                data = sock.recv(4096).decode()
+                largo = 11 + len(data.split()[1])
+
+                if data:
+                    message = '000{}deljaexito {}'.format(largo,data.split()[1]).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
             except:
