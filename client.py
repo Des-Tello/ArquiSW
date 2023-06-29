@@ -82,38 +82,37 @@ while True:
                 print("Login de director realizado correctamente")
                 
                 while True:
-                    print("4 - Actualización Alumno")
-                    print("5 - Borrar Alumno")
-                    print('13 - Registo Personal')
-                    print("6 - Control Asistencia")
-                    print("14 - Asistencia por Jardin")
-                    print("15 - Comparación Asistencia")
-                    print("16 - Visualización Asistencia de Personal")
+                    print("1 - Actualización Alumno")
+                    print("2 - Borrar Alumno")
+                    print('3 - Registo Personal')
+                    print("4 - Control Asistencia")
+                    print("5 - Asistencia por Jardin")
+                    print("6 - Comparación Asistencia")
+                    print("7 - Visualización Asistencia de Personal")
                     opcion = input("¿Que desea hacer? ")
                     try:
-                        if opcion == '4':
+                        if opcion == '1':
                             # Actualización Alumno - updal
-                            if opcion == '4':
-                                Rut = obtenerRut()
-                                Nombre = input("Ingrese el Nombre: ")
-                                Apellido = input("Ingrese el Apellido: ")
-                                FechaNacimiento = input("Ingrese el Fecha de Nacimiento (YYYY-MM-DD): ")
-                                NombreJardin = input("Ingrese el nombre del Jardin: ").replace(" ", "-")
-                                CursoID = input("Ingrese el ID del Curso: ")
+                            Rut = obtenerRut()
+                            Nombre = input("Ingrese el Nombre: ")
+                            Apellido = input("Ingrese el Apellido: ")
+                            FechaNacimiento = input("Ingrese el Fecha de Nacimiento (YYYY-MM-DD): ")
+                            NombreJardin = input("Ingrese el nombre del Jardin: ").replace(" ", "-")
+                            CursoID = input("Ingrese el ID del Curso: ")
 
-                                largo = len( Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID+opcion ) + 13
+                            largo = len( Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID+opcion ) + 13
 
-                                message = '000{}updal {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID ).encode()
-                                print ('sending {!r}'.format (message))
-                                sock.sendall( message )
-                                if respuesta():
-                                    print("Alumno actualizado correctamente")
+                            message = '000{}updal {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID ).encode()
+                            print ('sending {!r}'.format (message))
+                            sock.sendall( message )
+                            if respuesta():
+                                print("Alumno actualizado correctamente")
 
-                                elif loginState == True and rol == 'nopro':
-                                    print("Login de usuario normal realizado correctamente")
+                            elif loginState == True and rol == 'nopro':
+                                print("Login de usuario normal realizado correctamente")
                     
                         # Borrar Alumno - delal
-                        elif opcion == '5':
+                        elif opcion == '2':
                             Rut = obtenerRut()
 
                             largo = len( Rut ) + 13
@@ -125,7 +124,7 @@ while True:
                                 print("Almuno eliminado correctamente")
 
                         #Registrar Personal - newpe
-                        elif opcion == '13':
+                        elif opcion == '3':
                             Rut = obtenerRut()
                             Jardin = input("Ingrese el nombre del jardin: ")
                             Nombre = input("Ingrese el nombre del personal: ")
@@ -142,7 +141,7 @@ while True:
                                 print("Personal registrado correctamente")
 
                         # Control Asistencia - conas
-                        elif opcion == '6':
+                        elif opcion == '4':
                             Rut = obtenerRut()
                             Fecha = input("Ingrese la Fecha (YYYY-MM-DD): ")
                             Estado = input("Asiste (1-SI 0-NO) ")
@@ -156,7 +155,7 @@ while True:
                                 print("Asistencia mostrada correctamente en el servicio")
 
                         # Asistencia por jardin - asija
-                        elif opcion == '14':
+                        elif opcion == '5':
                             NombreJardin = input("Ingrese Nombre de Jardin: ")
                             FechaDesde = input("Ingrese Fecha desde (YYYY-MM-DD): ")
                             FechaHasta = input("Ingrese Fecha hasta (YYYY-MM-DD): ")
@@ -170,7 +169,7 @@ while True:
                                 print("Asistencia presentada en el servicio correspondiente")
 
                         # Comparación Asistencia - comas
-                        elif opcion == '15':
+                        elif opcion == '6':
                             NivelEducativo1 = input("Ingrese Nivel Educativo 1: ")
                             NivelEducativo2 = input("Ingrese Nivel Educativo 2: ")
                             FechaDesde = input("Ingrese Fecha desde (YYYY-MM-DD): ")
@@ -185,7 +184,7 @@ while True:
                                 print("Asistencia presentada en el servicio correspondiente")
 
                         # Visualización Asistencia de Personal - asipe
-                        elif opcion == '16':
+                        elif opcion == '7':
                             PersonalID = input("Ingrese ID de Personal: ")
                             Fecha = input("Ingrese Fecha (YYYY-MM-DD): ")
                             
@@ -203,24 +202,29 @@ while True:
             elif loginState == True and rol == 2: #Administrador
                 print("Login de administrador realizado correctamente")
                 while True:
-                    print("2 - Registro Usuario")
-                    print('11 - Eliminar Usuario')
-                    print("7 - Creacion Jardín")
-                    print("8 - Actualización Jardín")
-                    print("9 - Eliminar Jardín")
-                    print("10 - Estadísticas Jardín")
+                    print("1 - Registro Usuario")
+                    print('2 - Eliminar Usuario')
+                    print("3 - Creacion Jardín")
+                    print("4 - Actualización Jardín")
+                    print("5 - Eliminar Jardín")
+                    print("6 - Estadísticas Jardín")
                     opcion = input("¿Que desea hacer? ")
                     try:
                         # Registro
-                        if opcion == '2':
+                        if opcion == '1':
+                            Roles = {
+                                'Director':1,
+                                'Administrador':2,
+                                'Usuario':3
+                            }
                             Nombre = input("Ingrese el Nombre:")
                             Rut = obtenerRut()
                             Correo = input("Ingrese el Correo:")
                             Contrasena = input("Ingrese la Contrasena:")
                             Telefono = obtenerNumero()
-                            Rol = input("Ingrese el Rol:")
+                            Rol = input("Ingrese el Rol (Director - Usuario):")
                             Jardin  = input("Ingrese el Jardin :")
-
+                            Rol = Roles[Rol]
                             largo = len(Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin+opcion) + 13
 
                             message = '000{}regis {} {} {} {} {} {} {} {}'.format(largo,opcion,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin).encode()
@@ -230,7 +234,7 @@ while True:
                                 print("Registro realizado correctamente")
 
                         #Eliminar usuario - delus
-                        elif opcion == '11': 
+                        elif opcion == '2': 
                             Rut = obtenerRut()
 
                             largo = len( Rut ) + 10
@@ -242,7 +246,7 @@ while True:
                                 print("Usuario eliminado correctamente")
                     
                         # Creacion Jardin - newja
-                        elif opcion == '7':
+                        elif opcion == '3':
                             NombreJardin = input("Ingrese el nombre del jardín a crear: ").replace(' ','-')
                             Direccion = input("Ingrese la dirección del jardín: ").replace(' ','-')
                             Telefono = obtenerNumero()
@@ -256,7 +260,7 @@ while True:
                                 print("Jardin creado correctamente")
                     
                         # Actualizar Jardin - updja
-                        elif opcion == '8':
+                        elif opcion == '4':
                             Nombre1 = input("Ingrese el nombre del jardín a actualizar: ")
                             Nombre2 = input("Ingrese el nuevo nombre para este jardin: ").replace(' ','-')
                             Direccion = input("Ingrese la nueva dirección: ").replace(' ','-')
@@ -271,7 +275,7 @@ while True:
                                 print("Jardin actualizado correctamente")
                     
                         # Eliminar Jardin - delja
-                        elif opcion == '9':
+                        elif opcion == '5':
                             Nombre = input("Ingrese el nombre del jardín a eliminar: ").replace(' ','-')
 
                             largo = len( Nombre ) + 10
@@ -283,7 +287,7 @@ while True:
                                 print("Jardin eliminado correctamente") 
 
                         # Estadisticas Jardin - estja
-                        elif opcion == '10':
+                        elif opcion == '6':
                             Nombre = input("Ingrese el nombre del jardín para consultar estadisticas: ").replace(' ','-')
                             
                             largo = len( Nombre ) + 10
@@ -300,12 +304,12 @@ while True:
             elif loginState == True and rol == 3: #Usuario
                 print("Login de usuario realizado correctamente")
                 while True:
-                    print("3 - Registro Alumno")
-                    print('12 - Actualizar Usuario')
+                    print("1 - Registro Alumno")
+                    print('2 - Actualizar Usuario')
                     opcion = input("¿Que desea hacer? ")
                     try:
                         # Registro Alumno - newal
-                        if opcion == '3':
+                        if opcion == '1':
                             Rut = obtenerRut()
                             Nombre = input("Ingrese el Nombre: ")
                             Apellido = input("Ingrese el Apellido: ")
@@ -322,7 +326,7 @@ while True:
                                 print("Registro de alumno realizado correctamente")
                             
                         #Actualizacion de usuario - updus
-                        elif opcion == '12':
+                        elif opcion == '2':
                             Rut = obtenerRut()
                             Nombre = input("Ingrese el nuevo nombre: ")
                             Correo = input("Ingrese el nuevo correo: ")
