@@ -52,6 +52,12 @@ def respuesta():
         return True
     return False
 
+def respuesta_registro_alumno():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+    logging.info("Datos sexuales {!r}".format(data))
+    print("Datos sexuales {!r}".format(data))
+
 while True:
     # Create a TCP/IP socket
     sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
@@ -100,9 +106,9 @@ while True:
                             NombreJardin = input("Ingrese el nombre del Jardin: ").replace(" ", "-")
                             CursoID = input("Ingrese el ID del Curso: ")
 
-                            largo = len( Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID+opcion ) + 13
+                            largo = len( Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID ) + 13 + 1
 
-                            message = '000{}updal {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID ).encode()
+                            message = '000{}updal {} {} {} {} {} {} {}'.format( largo,4,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -115,9 +121,9 @@ while True:
                         elif opcion == '2':
                             Rut = obtenerRut()
 
-                            largo = len( Rut ) + 13
+                            largo = len( Rut ) + 13 + 1
 
-                            message = '000{}delal {} {}'.format( largo,opcion,Rut ).encode()
+                            message = '000{}delal {} {}'.format( largo,5,Rut ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -146,9 +152,9 @@ while True:
                             Fecha = input("Ingrese la Fecha (YYYY-MM-DD): ")
                             Estado = input("Asiste (1-SI 0-NO) ")
 
-                            largo = len( Rut+Fecha+Estado ) + 13
+                            largo = len( Rut+Fecha+Estado ) + 13 + 1
 
-                            message = '000{}conas {} {} {} {}'.format( largo,opcion,Rut,Fecha,Estado ).encode()
+                            message = '000{}conas {} {} {} {}'.format( largo,6,Rut,Fecha,Estado ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -160,9 +166,9 @@ while True:
                             FechaDesde = input("Ingrese Fecha desde (YYYY-MM-DD): ")
                             FechaHasta = input("Ingrese Fecha hasta (YYYY-MM-DD): ")
                             
-                            largo = len(NombreJardin+FechaDesde+FechaHasta+opcion) + 10
+                            largo = len(NombreJardin+FechaDesde+FechaHasta) + 10 + 2
 
-                            message = '000{}asija {} {} {} {}'.format(largo,opcion,NombreJardin,FechaDesde,FechaHasta).encode()
+                            message = '000{}asija {} {} {} {}'.format(largo,14,NombreJardin,FechaDesde,FechaHasta).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -175,9 +181,9 @@ while True:
                             FechaDesde = input("Ingrese Fecha desde (YYYY-MM-DD): ")
                             FechaHasta = input("Ingrese Fecha hasta (YYYY-MM-DD): ")
                             
-                            largo = len(NivelEducativo1+NivelEducativo2+FechaDesde+FechaHasta+opcion) + 10
+                            largo = len(NivelEducativo1+NivelEducativo2+FechaDesde+FechaHasta) + 10 + 2
 
-                            message = '000{}comas {} {} {} {} {}'.format(largo,opcion,NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta).encode()
+                            message = '000{}comas {} {} {} {} {}'.format(largo,15,NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -188,9 +194,9 @@ while True:
                             PersonalID = input("Ingrese ID de Personal: ")
                             Fecha = input("Ingrese Fecha (YYYY-MM-DD): ")
                             
-                            largo = len(PersonalID+Fecha+opcion) + 10
+                            largo = len(PersonalID+Fecha) + 10 + 2
 
-                            message = '000{}asipe {} {} {}'.format(largo,opcion,PersonalID,Fecha).encode()
+                            message = '000{}asipe {} {} {}'.format(largo,16,PersonalID,Fecha).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -225,9 +231,9 @@ while True:
                             Rol = input("Ingrese el Rol (Director - Usuario):")
                             Jardin  = input("Ingrese el Jardin :")
                             Rol = Roles[Rol]
-                            largo = len(Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin+opcion) + 13
+                            largo = len(Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin) + 13 + 1
 
-                            message = '000{}regis {} {} {} {} {} {} {} {}'.format(largo,opcion,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin).encode()
+                            message = '000{}regis {} {} {} {} {} {} {} {}'.format(largo,2,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall (message)
                             if respuesta():
@@ -237,9 +243,9 @@ while True:
                         elif opcion == '2': 
                             Rut = obtenerRut()
 
-                            largo = len( Rut ) + 10
+                            largo = len( Rut ) + 10 + 2
 
-                            message = '000{}delus {} {}'.format( largo,opcion,Rut ).encode()
+                            message = '000{}delus {} {}'.format( largo,11,Rut ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -251,9 +257,9 @@ while True:
                             Direccion = input("Ingrese la dirección del jardín: ").replace(' ','-')
                             Telefono = obtenerNumero()
 
-                            largo = len(NombreJardin+Direccion+Telefono+opcion) + 12
+                            largo = len(NombreJardin+Direccion+Telefono) + 12 + 1
 
-                            message = '000{}newja {} {} {} {}'.format( largo,opcion,NombreJardin,Direccion,Telefono ).encode()
+                            message = '000{}newja {} {} {} {}'.format( largo,7,NombreJardin,Direccion,Telefono ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -266,9 +272,9 @@ while True:
                             Direccion = input("Ingrese la nueva dirección: ").replace(' ','-')
                             Telefono = obtenerNumero()
 
-                            largo = len( Nombre1+Nombre2+Direccion+Telefono ) + 13
+                            largo = len( Nombre1+Nombre2+Direccion+Telefono ) + 13 + 1
 
-                            message = '000{}updja {} {} {} {} {}'.format( largo,opcion,Nombre1,Nombre2,Direccion,Telefono ).encode()
+                            message = '000{}updja {} {} {} {} {}'.format( largo,8,Nombre1,Nombre2,Direccion,Telefono ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -278,9 +284,9 @@ while True:
                         elif opcion == '5':
                             Nombre = input("Ingrese el nombre del jardín a eliminar: ").replace(' ','-')
 
-                            largo = len( Nombre ) + 10
+                            largo = len( Nombre ) + 10 + 1
 
-                            message = '000{}delja {} {}'.format( largo,opcion,Nombre ).encode()
+                            message = '000{}delja {} {}'.format( largo,9,Nombre ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -290,9 +296,9 @@ while True:
                         elif opcion == '6':
                             Nombre = input("Ingrese el nombre del jardín para consultar estadisticas: ").replace(' ','-')
                             
-                            largo = len( Nombre ) + 10
+                            largo = len( Nombre ) + 10 + 2
 
-                            message = '000{}estja {} {}'.format( largo,opcion,Nombre ).encode()
+                            message = '000{}estja {} {}'.format( largo,10,Nombre ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
@@ -317,13 +323,16 @@ while True:
                             NombreJardin = input("Ingrese el nombre del Jardin: ").replace(" ", "-")
                             CursoID = input("Ingrese el ID del Curso: ")
 
-                            largo = len(Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID+opcion) + 13
+                            largo = len(Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID) + 13 + 1
 
-                            message = '000{}newal {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID).encode()
+                            message = '000{}newal {} {} {} {} {} {} {}'.format(largo,3,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
-                                print("Registro de alumno realizado correctamente")
+
+                            respuesta_registro_alumno()
+
+                            # if respuesta():
+                            #     print("Registro de alumno realizado correctamente")
                             
                         #Actualizacion de usuario - updus
                         elif opcion == '2':
@@ -335,9 +344,9 @@ while True:
                             Rol = input("Ingrese el nuevo rol: ")
                             Jardin = input("Ingrese el nuevo jardin: ")
 
-                            largo = len( Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin ) + 16
+                            largo = len( Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin ) + 16 + 1
 
-                            message = '000{}updus {} {} {} {} {} {} {} {}'.format( largo,opcion,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin ).encode()
+                            message = '000{}updus {} {} {} {} {} {} {} {}'.format( largo,4,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             if respuesta():
