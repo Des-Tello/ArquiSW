@@ -52,37 +52,14 @@ def respuesta():
     time.sleep(2)
     data = sock.recv(4096).decode()
     print("recibido")
-    if 'exito' in data:
-        return True
-    return False
-
+    print(data.split()[1].replace('-',' '))
+    
 def respuesta_registro_alumno():
     time.sleep(2)
     data = sock.recv(4096).decode()
     print("hola")
     logging.info("Datos sexuales {!r}".format(data))
     print("Datos sexuales {!r}".format(data))
-
-def respuestaCrearJardin():
-    time.sleep(2)
-    data = sock.recv(4096).decode()
-    print("recibido")
-    print(data.split()[1].replace('-',' '))
-
-def respuestaActualizarJardin():
-    data = sock.recv(4096).decode()
-    print("recibido")
-    print(data.split()[1].replace('-',' '))
-    
-def respuestaEliminarJardin():
-    data = sock.recv(4096).decode()
-    print("recibido")
-    print(data.split()[1].replace('-',' '))
-
-def respuestaEstadisticasJardin():
-    data = sock.recv(4096).decode()
-    print("recibido")
-    print(data.split()[1].replace('-',' '))
 
 while True:
     # Create a TCP/IP socket
@@ -288,7 +265,7 @@ while True:
                             message = '000{}newja {} {} {} {}'.format( largo,7,NombreJardin,Direccion,Telefono ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message)
-                            respuestaCrearJardin()
+                            respuesta()
                     
                         # Actualizar Jardin - updja
                         elif opcion == '4':
@@ -302,7 +279,7 @@ while True:
                             message = '000{}updja {} {} {} {} {}'.format( largo,8,Nombre1,Nombre2,Direccion,Telefono ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            respuestaActualizarJardin()
+                            respuesta()
                     
                         # Eliminar Jardin - delja
                         elif opcion == '5':
@@ -313,7 +290,7 @@ while True:
                             message = '000{}delja {} {}'.format( largo,9,Nombre ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            respuestaEliminarJardin()
+                            respuesta()
 
                         # Estadisticas Jardin - estja
                         elif opcion == '6':
@@ -324,7 +301,7 @@ while True:
                             message = '000{}estja {} {}'.format( largo,10,Nombre ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            respuestaEstadisticasJardin()
+                            respuesta()
 
                     except:
                         pass
