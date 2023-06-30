@@ -46,7 +46,7 @@ try:
                     else:
                         message = '00010asipeexito {}'.format(algo).encode()
                     logging.info ('sending {!r}'.format (message))
-                    sock.send(message)
+                    sock.sendall(message)
             except:
                 pass
             logging.info('-------------------------------')

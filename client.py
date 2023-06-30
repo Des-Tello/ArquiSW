@@ -200,7 +200,21 @@ def respuesta_visualizacion_Asistencia_Personal():
     elif 'fecha' in data:
         #print('fechas')
         return True, 2
-    
+
+def respuesta_registro_personal():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+    #print(data)
+    if 'exito' in data:
+        return True, 3
+
+    elif 'rut' in data:
+        #print('jardin')
+        return True, 1
+    elif 'jardin' in data:
+        #print('fechas')
+        return True, 2
+
 while True:
     # Create a TCP/IP socket
     sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
@@ -223,7 +237,7 @@ while True:
             Contrasena = input("Ingrese la Contrasena:")
             largo = len(Rut+Contrasena+opcion)+13
             message = '000{}login {} {} {}'.format(largo,opcion,Rut,Contrasena).encode()
-            print ('sending {!r}'.format (message))
+            #print ('sending {!r}'.format (message))
             sock.sendall (message)
             loginState, rol = respuestaLogin()
 
@@ -252,7 +266,7 @@ while True:
                             largo = len( Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID ) + 13 + 1
 
                             message = '000{}updal {} {} {} {} {} {} {}'.format( largo,4,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID ).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
 
                             respuesta_actualizar_alumno()
@@ -264,7 +278,7 @@ while True:
                             largo = len( Rut ) + 13 + 1
 
                             message = '000{}delal {} {}'.format( largo,5,Rut ).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
 
                             respuesta_borrar_alumno()
@@ -280,10 +294,15 @@ while True:
 
                             largo = len( Rut+Jardin+Nombre+Apellido+Cargo+FechaNacimiento ) + 15
 
-                            message = '000{}newpe {} {} {} {} {} {} {}'.format( largo,opcion,Rut,Jardin,Nombre,Apellido,Cargo,FechaNacimiento ).encode()
-                            print ('sending {!r}'.format (message))
+                            message = '000{}newpe {} {} {} {} {} {} {}'.format( largo,13,Rut,Jardin,Nombre,Apellido,Cargo,FechaNacimiento ).encode()
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
+                            a,resultado = respuesta_registro_personal() 
+                            if a == True and resultado == 1:
+                                print('Rut no existe')
+                            elif a == True and resultado == 2:
+                                print('Jardin no existe')
+                            elif a == True and resultado == 3:
                                 print("Personal registrado correctamente")
 
                         # Control Asistencia - conas
@@ -295,7 +314,7 @@ while True:
                             largo = len( Rut+Fecha+Estado ) + 13 + 1
 
                             message = '000{}conas {} {} {} {}'.format( largo,6,Rut,Fecha,Estado ).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
 
                             respuesta_control_asistencia()
@@ -330,7 +349,7 @@ while True:
                             largo = len(NivelEducativo1+NivelEducativo2+FechaDesde+FechaHasta) + 10 + 2
 
                             message = '000{}comas {} {} {} {} {}'.format(largo,15,NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             a,resultado = respuesta_comparacion_asistencia()
                             if a == True and resultado != 1 and resultado != 2:
@@ -349,7 +368,7 @@ while True:
                             largo = len(PersonalRut+Fecha) + 10 + 2
 
                             message = '000{}asipe {} {} {}'.format(largo,16,PersonalRut,Fecha).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             a,resultado =respuesta_visualizacion_Asistencia_Personal() 
                             if a == True and resultado != 1 and resultado != 2:
@@ -392,7 +411,7 @@ while True:
                             largo = len(Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin) + 13 + 1
 
                             message = '000{}regis {} {} {} {} {} {} {} {}'.format(largo,2,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall (message)
                             if respuesta():
                                 print("Registro realizado correctamente")
@@ -404,7 +423,7 @@ while True:
                             largo = len( Rut ) + 10 + 2
 
                             message = '000{}delus {} {}'.format( largo,11,Rut ).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             
                             respuesta_borrar_usuario()
@@ -418,7 +437,7 @@ while True:
                             largo = len(NombreJardin+Direccion+Telefono) + 12 + 1
 
                             message = '000{}newja {} {} {} {}'.format( largo,7,NombreJardin,Direccion,Telefono ).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message)
                             respuesta()
                     
@@ -432,7 +451,7 @@ while True:
                             largo = len( Nombre1+Nombre2+Direccion+Telefono ) + 13 + 1
 
                             message = '000{}updja {} {} {} {} {}'.format( largo,8,Nombre1,Nombre2,Direccion,Telefono ).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             respuesta()
                     
@@ -443,7 +462,7 @@ while True:
                             largo = len( Nombre ) + 10 + 1
 
                             message = '000{}delja {} {}'.format( largo,9,Nombre ).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             respuesta()
 
@@ -454,7 +473,7 @@ while True:
                             largo = len( Nombre ) + 10 + 2
 
                             message = '000{}estja {} {}'.format( largo,10,Nombre ).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             respuesta()
 
@@ -480,7 +499,7 @@ while True:
                             largo = len(Rut+Nombre+Apellido+FechaNacimiento+NombreJardin+CursoID) + 13 + 1
 
                             message = '000{}newal {} {} {} {} {} {} {}'.format(largo,3,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
 
                             respuesta_registro_alumno()
@@ -498,7 +517,7 @@ while True:
                             largo = len( Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin ) + 16 + 1
 
                             message = '000{}updus {} {} {} {} {} {} {} {}'.format( largo,12,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin ).encode()
-                            print ('sending {!r}'.format (message))
+                            #print ('sending {!r}'.format (message))
                             sock.sendall( message )
                             respuesta()
 

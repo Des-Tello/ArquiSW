@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-init_sql_file = "/home/users/diego.carrillo1/ArquiSW/db/init.sql"
+init_sql_file = "/home/users/rodrigo.ordenes/ArquiSW/db/init.sql"
 
 def read_init_sql(file_path):
     with open(file_path, "r") as sql_file:
@@ -305,10 +305,10 @@ def registrarPersonal(Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento):
 
         if count_personal > 0 :
             logging.info("El rut ya se encuentra registrado.")
-            val = False
+            return 1
         if count_jardin < 1:
             logging.info("El jardin no existe.")
-            val = False
+            return 2
         if val == True:
             cursor.execute("""
                 INSERT INTO Personal (Rut, NombreJardin, Nombre, Apellido, Cargo, FechaNacimiento)
@@ -316,7 +316,7 @@ def registrarPersonal(Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento):
             """, (Rut, Jardin, Nombre, Apellido, Cargo, FechaNacimiento))
             conn.commit()
             logging.info("Personal registrado correctamente")
-
+            return 3
     except sqlite3.Error as error:
         logging.info("Error al registrar el personal:", error)
 
@@ -430,7 +430,7 @@ def asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta):
     except sqlite3.Error as error:
         logging.info("Error al revisar las asistencias por jardín:", error)
 
-conn = sqlite3.connect("/home/users/diego.carrillo1/ArquiSW/services/database.db")
+conn = sqlite3.connect("/home/users/rodrigo.ordenes/ArquiSW/services/database.db")
 cursor = conn.cursor()
 
 read_init_sql(init_sql_file)
@@ -625,8 +625,13 @@ try:
                     FechaNacimiento = data[7]
 
                     logging.info('Registrando Personal...')
-                    registrarPersonal(Rut,Jardin,Nombre,Apellido,Cargo,FechaNacimiento)
-                    message = '00015datosnewpexito'.encode()
+                    resultado = registrarPersonal(Rut,Jardin,Nombre,Apellido,Cargo,FechaNacimiento)
+                    if resultado == 1:
+                        message = '00015datosnewrut'.encode()
+                    elif resultado == 2:
+                        message = '00015datosnewpejardin'
+                    else:
+                        message = '00015datosnewpexito'.encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 

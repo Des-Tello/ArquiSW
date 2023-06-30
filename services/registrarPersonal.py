@@ -40,10 +40,15 @@ try:
                 message = '000{}datos {} {} {} {} {} {} {}'.format(largo,opcion,Rut,NombreJardin,Nombre,Apellido,Cargo,FechaNacimiento).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
-                if sock.recv(4096):
-                    message = '00010newpeexito'.encode()
-                    logging.info ('sending {!r}'.format (message))
-                    sock.send(message)
+                algo = sock.recv(4096).decode()
+                if 'rut' in algo:
+                    message = '00010newperut'.encode()
+                elif 'jardin' in algo:
+                    message = '00010newpejardin'.encode()
+                else:
+                    message = '00010newpeexito {}'.format(algo).encode()
+                    logging.info ('sending {!r}'.format(message))
+                    sock.sendall(message)
             except:
                 pass
             logging.info('-------------------------------')
