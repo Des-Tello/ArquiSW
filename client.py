@@ -94,6 +94,105 @@ def respuesta_borrar_alumno():
     elif 'alumnonoexistente' in data: print('** Error de Eliminación: Alumno no existente en la base de datos.')
     else: print('** Error de Eliminación Desconocida.')
 
+def respuesta_asistencia_jardin():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+    #print(data)
+    if 'exito' in data:
+        # Separar la cadena por los corchetes externos
+        cadena_sin_corchetes = data.split("[")[1].split("]")[0]
+
+        # Separar los elementos dentro de la lista
+        elementos = cadena_sin_corchetes.split(",")
+        
+        # Convertir los elementos a su tipo de dato correspondiente
+        elementos_convertidos = []
+        for elemento in elementos:
+            elemento = elemento.strip()
+
+            # Comprobar si el elemento es una tupla
+            if elemento.startswith("(") and elemento.endswith(")"):
+                elemento = eval(elemento)
+            # Comprobar si el elemento es un entero
+            elif elemento.isdigit():
+                elemento = int(elemento)
+
+            elementos_convertidos.append(elemento)
+
+        return True, elementos_convertidos
+    elif 'jardin' in data:
+        #print('jardin')
+        return True, 1
+    elif 'fechas' in data:
+        #print('fechas')
+        return True, 2
+
+def respuesta_comparacion_asistencia():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+    #print(data)
+    if 'exito' in data:
+        # Separar la cadena por los corchetes externos
+        cadena_sin_corchetes = data.split("[")[1].split("]")[0]
+
+        # Separar los elementos dentro de la lista
+        elementos = cadena_sin_corchetes.split(",")
+        
+        # Convertir los elementos a su tipo de dato correspondiente
+        elementos_convertidos = []
+        for elemento in elementos:
+            elemento = elemento.strip()
+
+            # Comprobar si el elemento es una tupla
+            if elemento.startswith("(") and elemento.endswith(")"):
+                elemento = eval(elemento)
+            # Comprobar si el elemento es un entero
+            elif elemento.isdigit():
+                elemento = int(elemento)
+
+            elementos_convertidos.append(elemento)
+
+        return True, elementos_convertidos
+    elif 'cursos' in data:
+        #print('jardin')
+        return True, 1
+    elif 'fechas' in data:
+        #print('fechas')
+        return True, 2    
+
+def respuesta_visualizacion_Asistencia_Personal():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+    #print(data)
+    if 'exito' in data:
+        # Separar la cadena por los corchetes externos
+        cadena_sin_corchetes = data.split("[")[1].split("]")[0]
+
+        # Separar los elementos dentro de la lista
+        elementos = cadena_sin_corchetes.split(",")
+        
+        # Convertir los elementos a su tipo de dato correspondiente
+        elementos_convertidos = []
+        for elemento in elementos:
+            elemento = elemento.strip()
+
+            # Comprobar si el elemento es una tupla
+            if elemento.startswith("(") and elemento.endswith(")"):
+                elemento = eval(elemento)
+            # Comprobar si el elemento es un entero
+            elif elemento.isdigit():
+                elemento = int(elemento)
+
+            elementos_convertidos.append(elemento)
+
+        return True, elementos_convertidos
+    elif 'rut' in data:
+        #print('jardin')
+        return True, 1
+    elif 'fecha' in data:
+        #print('fechas')
+        return True, 2
+    
 while True:
     # Create a TCP/IP socket
     sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
@@ -202,10 +301,16 @@ while True:
                             largo = len(NombreJardin+FechaDesde+FechaHasta) + 10 + 2
 
                             message = '000{}asija {} {} {} {}'.format(largo,14,NombreJardin,FechaDesde,FechaHasta).encode()
-                            print ('sending {!r}'.format (message))
-                            sock.sendall( message )
-                            if respuesta():
-                                print("Asistencia presentada en el servicio correspondiente")
+                            #print ('sending {!r}'.format (message))
+                            sock.sendall(message)
+                            a,resultado = respuesta_asistencia_jardin()
+                            if a == True and resultado != 1 and resultado != 2:
+                                print("Asistencia presentada a continuación")
+                                print(resultado)
+                            elif a == True and resultado == 1:
+                                print('Jardín no existente')
+                            elif a == True and resultado == 2:
+                                print('No existen asistencias registradas en el jardin en ese rango de fechas')
 
                         # Comparación Asistencia - comas
                         elif opcion == '6':
@@ -219,21 +324,33 @@ while True:
                             message = '000{}comas {} {} {} {} {}'.format(largo,15,NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
+                            a,resultado = respuesta_comparacion_asistencia()
+                            if a == True and resultado != 1 and resultado != 2:
                                 print("Asistencia presentada en el servicio correspondiente")
+                                print(resultado)
+                            elif a == True and resultado == 1:
+                                print('No hay asistencias registradas a los cursos')
+                            elif a == True and resultado == 2:
+                                print('No existen asistencias registradas a los cursos en el rango de fechas')
 
                         # Visualización Asistencia de Personal - asipe
                         elif opcion == '7':
-                            PersonalID = input("Ingrese ID de Personal: ")
+                            PersonalRut = input('Ingrese rut sin punto ni guión: ')
                             Fecha = input("Ingrese Fecha (YYYY-MM-DD): ")
                             
-                            largo = len(PersonalID+Fecha) + 10 + 2
+                            largo = len(PersonalRut+Fecha) + 10 + 2
 
-                            message = '000{}asipe {} {} {}'.format(largo,16,PersonalID,Fecha).encode()
+                            message = '000{}asipe {} {} {}'.format(largo,16,PersonalRut,Fecha).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
-                                print("Asistencia presentada en el servicio correspondiente")
+                            a,resultado =respuesta_visualizacion_Asistencia_Personal() 
+                            if a == True and resultado != 1 and resultado != 2:
+                                print("Asistencia de personal a continuación")
+                                print(resultado)
+                            elif a == True and resultado == 1:
+                                print('Rut de personal no registrado')
+                            elif a == True and resultado == 2:
+                                print('No existe asistencia del personal correspondiente a la fecha')
 
                     except:
                         pass

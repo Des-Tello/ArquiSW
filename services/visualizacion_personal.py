@@ -28,17 +28,23 @@ try:
             data = data.decode().split()
             try:
                 opcion = data[1]
-                PersonalID = data[2]
+                PersonalRut = data[2]
                 Fecha = data[3]
                 #FechaDesde = data[4]
                 #FechaHasta = data[5]
                 
-                largo = len(PersonalID+Fecha+opcion) + 8
-                message = '000{}datos {} {} {}'.format(largo,opcion,PersonalID,Fecha).encode()
+                largo = len(PersonalRut+Fecha+opcion) + 8
+                message = '000{}datas {} {} {}'.format(largo,opcion,PersonalRut,Fecha).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
-                if sock.recv(4096):
-                    message = '00010asipeexito'.encode()
+                algo = sock.recv(4096).decode() 
+                if algo:
+                    if 'rut' in algo:
+                        message = '00011asiperut'.encode()
+                    elif 'fecha' in algo:
+                        message = '00011asipefecha'.encode()
+                    else:
+                        message = '00010asipeexito {}'.format(algo).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
             except:

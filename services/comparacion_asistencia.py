@@ -34,11 +34,17 @@ try:
                 FechaDesde = data[4]
                 FechaHasta = data[5]
                 largo = len(NivelEducativo1+NivelEducativo2+FechaDesde+FechaHasta+opcion) + 10
-                message = '000{}datos {} {} {} {} {}'.format(largo,opcion,NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta).encode()
+                message = '000{}datas {} {} {} {} {}'.format(largo,opcion,NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
-                if sock.recv(4096):
-                    message = '00010comasexito'.encode()
+                algo = sock.recv(4096).decode()
+                if algo:
+                    if 'cursos' in algo:
+                        message = '00011comascursos'.encode()
+                    elif 'fechas' in algo:
+                        message = '00011comaserfchas'.encode()
+                    elif 'exito' in algo:
+                        message = '00010comasexito {}'.format(algo).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
             except:

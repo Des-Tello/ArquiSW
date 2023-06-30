@@ -32,11 +32,20 @@ try:
                 FechaDesde = data[3]
                 FechaHasta = data[4]
                 largo = len(NombreJardin+FechaDesde+FechaHasta+opcion) + 9
-                message = '000{}datos {} {} {} {}'.format(largo,opcion,NombreJardin,FechaDesde,FechaHasta).encode()
+                message = '000{}datas {} {} {} {}'.format(largo,opcion,NombreJardin,FechaDesde,FechaHasta).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
-                if sock.recv(4096):
-                    message = '00010asijaexito'.encode()
+                algo = sock.recv(4096).decode()
+                if algo:
+                    #print(algo)
+                    #message = '00010asijajardin {}'.format(algo.decode()).encode()
+                    if 'jardin' in algo:
+                        message = '00011asijajardin'.encode()
+                        #print('jardin')
+                    elif 'fechas' in algo:
+                        message = '00011asijafechas'.encode()
+                    elif 'exito' in algo:
+                        message = '00010asijaexito {}'.format(algo).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
             except:

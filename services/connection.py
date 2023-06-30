@@ -321,51 +321,107 @@ def comparacionAsistencia(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta)
         #        INSERT INTO Curso (CursoID,NombreJardin,PersonalID) VALUES (2, sexo, 1)
         #    """)
         cursor.execute("""
-            SELECT CURSO.CursoID, ALUMNO.Nombre, ALUMNO.Apellido, ASISTENCIA.Fecha, ASISTENCIA.Estado FROM ASISTENCIA JOIN ALUMNO ON ASISTENCIA.PersonaRut = ALUMNO.Rut
+            SELECT COUNT(*) FROM CURSO WHERE CURSO.CursoID IN (?,?)
+            """,(NivelEducativo1,NivelEducativo2))
+        cursos = cursor.fetchone()[0]
+
+        if cursos < 1:
+            logging.info("No hay asistencias registradas a los cursos")
+            return 1
+        else:
+            cursor.execute("""
+                SELECT COUNT(*) FROM ASISTENCIA 
+                JOIN ALUMNO ON ASISTENCIA.PersonaRut = ALUMNO.Rut
+                JOIN CURSO ON ALUMNO.CursoID = CURSO.CursoID
+                WHERE CURSO.CursoID IN (?,?) AND ASISTENCIA.Fecha BETWEEN ? AND ?
+            """,(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta))
+            fechas = cursor.fetchone()[0]
+            if fechas < 1:
+                logging.info("No existen asistencias registradas a los cursos en el rango de fechas")
+                return 2
+            else:
+                cursor.execute("""
+                    SELECT CURSO.CursoID, ALUMNO.Nombre, ALUMNO.Apellido, ASISTENCIA.Fecha, ASISTENCIA.Estado FROM ASISTENCIA 
+                    JOIN ALUMNO ON ASISTENCIA.PersonaRut = ALUMNO.Rut
                     JOIN CURSO ON ALUMNO.CursoID = CURSO.CursoID
                     WHERE CURSO.CursoID IN (?,?) AND ASISTENCIA.Fecha BETWEEN ? AND ?
-        """,(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta,))
-        conn.commit()
-        Npersonal = cursor.fetchall()
-        logging.info("Comparación de Asistencia a continuación.")
-        #Npersonal = cursor.fetchall()
-        logging.info(Npersonal)
+                """,(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta))
+                Npersonal = cursor.fetchall()
+                
+        if len(Npersonal) > 0:
+            logging.info("Comparación de Asistencia a continuación.")
+            return Npersonal
+        
     except sqlite3.Error as error:
         logging.info("Error al comparar asistencia:", error)
 
-def visualizacionAsistenciaPersonal(PersonalID,Fecha):
+def visualizacionAsistenciaPersonal(PersonalRut,Fecha):
     try:
         #cursor.execute("""
         #        INSERT INTO PERSONAL (Rut,NombreJardin,Nombre,Apellido,Cargo,FechaNacimiento) VALUES ('20245835-1','Sandeli','Abel','Baulloza','ProGOD','2000-07-12')
         #    """)
+        cursor.execute(""" SELECT COUNT(*) FROM PERSONAL WHERE PERSONAL.Rut = ?
+        """,(PersonalRut,))
+        rut = cursor.fetchone()[0]
 
-        cursor.execute("""
-            SELECT * FROM ASISTENCIA JOIN PERSONAL ON ASISTENCIA.PersonaRut = PERSONAL.Rut
+        if rut < 1:
+            logging.info('Rut de personal no registrado')
+            return 1
+        else:
+            cursor.execute(""" SELECT COUNT(*) FROM ASISTENCIA JOIN PERSONAL ON ASISTENCIA.PersonaRut = PERSONAL.Rut
             WHERE PERSONAL.Rut = ? AND ASISTENCIA.Fecha = ?
-        """,(PersonalID,Fecha,))
-        conn.commit()
+            """,(PersonalRut,Fecha))
+            fecha = cursor.fetchone()[0]
+            if fecha < 1:
+                logging.info('No existe asistencia del personal correspondiente a la fecha')
+                return 2
+            else:
+                cursor.execute("""
+                SELECT ASISTENCIA.PersonaRut, ASISTENCIA.Fecha, ASISTENCIA.Estado FROM ASISTENCIA JOIN PERSONAL ON ASISTENCIA.PersonaRut = PERSONAL.Rut
+                WHERE PERSONAL.Rut = ? AND ASISTENCIA.Fecha = ?
+                """,(PersonalRut,Fecha))
+                Npersonal = cursor.fetchall()
 
-        Npersonal = cursor.fetchall()
-
-        #Npersonal = cursor.fetchall()
-        logging.info("Visualización Asistencia de Personal a continuación.")
-        logging.info(Npersonal)
+        if len(Npersonal) > 0:
+            logging.info("Visualización Asistencia de Personal a continuación")
+            return Npersonal
+        
     except sqlite3.Error as error:
         logging.info("Error al visualizar asistencias de personal:", error)
 
 def asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta):
     try:
+        #Verificar que exista jardin
         cursor.execute("""
-            SELECT * FROM ASISTENCIA JOIN ALUMNO ON ASISTENCIA.PersonaRut = ALUMNO.Rut
-            WHERE ALUMNO.NombreJardin = ? AND ASISTENCIA.Fecha BETWEEN ? AND ?
-        """,(NombreJardin,FechaDesde,FechaHasta))
-        conn.commit()
+            SELECT COUNT(*) FROM JARDIN WHERE JARDIN.NombreJardin = ?
+        """,(NombreJardin,))
+        jardin = cursor.fetchone()[0]
 
-        Npersonal = cursor.fetchall()
+        if jardin < 1:
+            logging.info("Jardín no existente")
+            return 1
+        else: 
+            #Verificar las fechas
+            cursor.execute("""
+                SELECT COUNT(*) FROM ASISTENCIA JOIN ALUMNO ON ASISTENCIA.PersonaRut = ALUMNO.Rut
+                    WHERE ALUMNO.NombreJardin = ? AND ASISTENCIA.Fecha BETWEEN ? AND ?
+                    """,(NombreJardin,FechaDesde,FechaHasta))
+            fechas = cursor.fetchone()[0]
 
-        #Npersonal = cursor.fetchall()
-        logging.info("Asistencia por Jardin a continuación.")
-        logging.info(Npersonal)
+            if fechas < 1:
+                logging.info("No existen asistencias registradas en el jardin en ese rango de fechas")
+                return 2
+            else:
+                cursor.execute("""
+                    SELECT ALUMNO.NombreJardin, ALUMNO.CursoID, ALUMNO.Rut, ASISTENCIA.Fecha, ASISTENCIA.Estado FROM ASISTENCIA JOIN ALUMNO ON ASISTENCIA.PersonaRut = ALUMNO.Rut
+                    WHERE ALUMNO.NombreJardin = ? AND ASISTENCIA.Fecha BETWEEN ? AND ?
+                    """,(NombreJardin,FechaDesde,FechaHasta))
+                resultado = cursor.fetchall()
+
+        if len(resultado) > 0:
+            logging.info("Asistencia por Jardin a continuación.")
+            return resultado
+        
     except sqlite3.Error as error:
         logging.info("Error al revisar las asistencias por jardín:", error)
 
@@ -575,8 +631,13 @@ try:
                     FechaHasta = data[4]
 
                     logging.info('Visualizando asistencias ...')
-                    asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta)
-                    message = '00015datosasipeexito'.encode()
+                    data = asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta)
+                    if data == 1:
+                        message = '00016datosasijajardin'.encode()
+                    elif data == 2:
+                        message = '00016datosasijafechas'.encode()
+                    else:
+                        message = '00015datosasijaexito {}'.format(data).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
@@ -586,22 +647,34 @@ try:
                     NivelEducativo2 = data[3]
                     FechaDesde = data[4]
                     FechaHasta = data[5]
-
+                    print(data)
 
                     logging.info('Comparando asistencias ...')
-                    comparacionAsistencia(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta)
-                    message = '00015datoscomasexito'.encode()
+                    data = comparacionAsistencia(NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta)
+                    print(data)
+                    if data == 1:
+                        message = '00016datoscomascursos'.encode()
+                    elif data == 2:
+                        message = '00016datoscomasfechas'.encode()
+                    else:
+                        message = '00015datoscomasexito {}'.format(data).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
                 elif opcion == '16':
                     #   Visualizacion ASISTENCIA por personal
-                    PersonalID = data[2]
+                    PersonalRut = data[2]
                     Fecha = data[3]
 
                     logging.info('Visualizando asistencias ...')
-                    visualizacionAsistenciaPersonal(PersonalID,Fecha)
-                    message = '00015datosasipeexito'.encode()
+                    data = visualizacionAsistenciaPersonal(PersonalRut,Fecha)
+                    print(data)
+                    if data == 1:
+                        message = '00016datosasiperut'.encode()
+                    elif data == 2:
+                        message = '00016datosasipefecha'.encode()
+                    else:
+                        message = '00015datosasipeexito {}'.format(data).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 
