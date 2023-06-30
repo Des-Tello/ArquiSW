@@ -217,7 +217,7 @@ while True:
             message = '000{}login {} {} {}'.format(largo,opcion,Rut,Contrasena).encode()
             print ('sending {!r}'.format (message))
             sock.sendall (message)
-            loginState,rol = respuestaLogin()
+            loginState, rol = respuestaLogin()
 
             if loginState == True and rol == 1: #Director
                 print("Login de director realizado correctamente")
@@ -489,11 +489,10 @@ while True:
 
                             largo = len( Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin ) + 16 + 1
 
-                            message = '000{}updus {} {} {} {} {} {} {} {}'.format( largo,4,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin ).encode()
+                            message = '000{}updus {} {} {} {} {} {} {} {}'.format( largo,12,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
-                                print("Usuario actualizado correctamente")
+                            respuesta()
 
                     except:
                         pass
