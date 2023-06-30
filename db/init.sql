@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Usuarios(
 
 CREATE TABLE IF NOT EXISTS CURSO (
     CursoID INTEGER PRIMARY KEY,
-    NombreJardin INTEGER,
+    NombreJardin TEXT,
     PersonalID INTEGER,
     FOREIGN KEY (NombreJardin) REFERENCES JARDIN(NombreJardin),
     FOREIGN KEY (PersonalID) REFERENCES PERSONAL(PersonalID)
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS ALUMNO (
 
 CREATE TABLE IF NOT EXISTS PERSONAL (
     Rut TEXT PRIMARY KEY,
-    NombreJardin INTEGER,
+    NombreJardin TEXT,
     Nombre TEXT,
     Apellido TEXT,
     Cargo TEXT,
@@ -62,6 +62,16 @@ CREATE TABLE IF NOT EXISTS PRIVILEGIO (
 
 INSERT OR IGNORE INTO Usuarios (Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin)
 VALUES 
-('Benjamin', '205740171', 'benjamin.tello@mail.udp.cl', 'benjamin1234', '12345678', '1', 'aweonao'),
-('Rodrigo', '19160024k', 'rodrigo.ordenes@mail.udp.cl', 'rodrigo1234', '98765432', '2', 'jeje'),
-('Abel', '202458351', 'abel.baulloza@mail.udp.cl', 'abel1234', '11112222', '3', 'jaja');
+('Benjamin', '205740171', 'benjamin.tello@mail.udp.cl', 'benjamin1234', '12345678', '1', 'maravilla'),
+('Rodrigo', '19160024k', 'rodrigo.ordenes@mail.udp.cl', 'rodrigo1234', '98765432', '2', 'maravilla'),
+('Abel', '202458351', 'abel.baulloza@mail.udp.cl', 'abel1234', '11112222', '3', 'maravilla');
+
+INSERT OR IGNORE INTO PERSONAL (Rut, NombreJardin, Nombre, Apellido, Cargo, FechaNacimiento) VALUES
+('19160024k', 'masha', 'Juan', 'Perez', 'Profesor', '1980-06-15'),
+('202458351', 'masha', 'Ana', 'Gomez', 'Profesor', '1985-12-10'),
+('205740171', 'masha', 'Luis', 'Martinez', 'Profesor', '1970-01-20');
+
+INSERT OR IGNORE INTO CURSO (CursoID, NombreJardin, PersonalID) VALUES
+(101, 'masha', '19160024k'),
+(202, 'masha', '202458351'),
+(303, 'masha', '205740171');
