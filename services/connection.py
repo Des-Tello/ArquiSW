@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-init_sql_file = "/home/users/benjamin.tello/software/db/init.sql"
+init_sql_file = "/home/users/rodrigo.ordenes/software/db/init.sql"
 
 def read_init_sql(file_path):
     with open(file_path, "r") as sql_file:
@@ -90,8 +90,10 @@ def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
     
     if count_alumno < 1:
         logging.info("Alumno no existente.")
+        return 2
     elif count_jardin < 1:
         logging.info("El jardín no existe.")
+        return 3
     # elif count_curso < 1:
     #     logging.info("El curso no existe en el jardín asociado.")
     else:
@@ -102,6 +104,8 @@ def actualizarAlumno(Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID):
         """, (CursoID, NombreJardin, Nombre, Apellido, FechaNacimiento, Rut))
         conn.commit()
         logging.info("Alumno actualizado con éxito.")
+        return 1
+    return False
         
 def borrarAlumno(Rut):
     cursor.execute("""
@@ -116,8 +120,10 @@ def borrarAlumno(Rut):
         """, (Rut,))
         conn.commit()
         logging.info("Alumno borrado con éxito.")
+        return 1
     else:
         logging.info("No hay ningun alumno existente.")
+        return 2
         
 def controlAsistencia(PersonaRut,Fecha,Estado):
     cursor.execute("""
@@ -132,6 +138,7 @@ def controlAsistencia(PersonaRut,Fecha,Estado):
 
     if count_alumno < 1 and count_personal < 1:
         logging.info("No se ha encontrado ningun rut asociado")
+        return 2
     else:
         cursor.execute("""
             INSERT INTO ASISTENCIA (PersonaRut, Fecha, Estado)
@@ -139,6 +146,7 @@ def controlAsistencia(PersonaRut,Fecha,Estado):
         """, (PersonaRut, Fecha, Estado))
         conn.commit()
         logging.info("Asistencia registrada con éxito.")
+        return 1
 
 def creacionJardin(NombreJardin, Direccion, Telefono):
     msg = ''
@@ -361,7 +369,7 @@ def asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta):
     except sqlite3.Error as error:
         logging.info("Error al revisar las asistencias por jardín:", error)
 
-conn = sqlite3.connect("/home/users/benjamin.tello/software/services/database.db")
+conn = sqlite3.connect("/home/users/rodrigo.ordenes/software/services/database.db")
 cursor = conn.cursor()
 
 read_init_sql(init_sql_file)

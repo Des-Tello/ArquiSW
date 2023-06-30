@@ -34,10 +34,18 @@ try:
                 message = '000{}datos {} {}'.format(largo,opcion,Rut).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
-                if sock.recv(4096):
+                
+                data = sock.recv(4096).decode()
+                if 'exito' in data:
                     message = '00010delalexito'.encode()
-                    logging.info ('sending {!r}'.format (message))
-                    sock.send(message)
+                elif 'alumnonoexistente' in data:
+                    message = '00027delalfallidoalumnonoexistente'.encode()
+                else:
+                    message = '00012delalfallido'.encode()
+
+                logging.info ('sending {!r}'.format (message))
+                sock.sendall(message)
+
             except:
                 pass
             logging.info('-------------------------------')

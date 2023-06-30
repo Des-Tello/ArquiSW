@@ -60,8 +60,8 @@ CREATE TABLE IF NOT EXISTS PRIVILEGIO (
     NivelPermiso INTEGER
 );
 
-INSERT INTO Usuarios (Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin)
+INSERT OR IGNORE INTO Usuarios (Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin)
 VALUES 
 ('Benjamin', '205740171', 'benjamin.tello@mail.udp.cl', 'benjamin1234', '12345678', '1', 'aweonao'),
-('Rodrigo', '19160024k', 'rodrigo.ordenes@mail.udp.cl', 'rodrigo1234', '12345678', '2', 'aweonao'),
-('Abel', '202458351', 'abel.baulloza@mail.udp.cl', 'abel1234', '12345678', '3', 'aweonao');
+('Rodrigo', '19160024k', 'rodrigo.ordenes@mail.udp.cl', 'rodrigo1234', '98765432', '2', 'jeje'),
+('Abel', '202458351', 'abel.baulloza@mail.udp.cl', 'abel1234', '11112222', '3', 'jaja');

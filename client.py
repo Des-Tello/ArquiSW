@@ -61,6 +61,39 @@ def respuesta_registro_alumno():
     logging.info("Datos sexuales {!r}".format(data))
     print("Datos sexuales {!r}".format(data))
 
+def respuesta_registro_alumno():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+
+    if 'exito' in data: print('** Registro Alumno exitoso.')
+    elif 'alumnoexistente' in data: print('** Error de Registro: Alumno ya existente en la base de datos.')
+    elif 'jardinnoexistente' in data: print('** Error de Registro: El jardin no se encuentra registrado en la base de datos.')
+    else: print('** Error de Registro Desconocido.')
+
+def respuesta_actualizar_alumno():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+
+    if 'exito' in data: print('** Actualización Alumno exitosa.')
+    elif 'alumnonoexistente' in data: print('** Error de Actualización: Alumno no existente en la base de datos.')
+    elif 'jardinnoexistente' in data: print('** Error de Actualización: El jardin no se encuentra registrado en la base de datos.')
+    else: print('** Error de Actualización Desconocida.')
+
+def respuesta_control_asistencia():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+
+    if 'exito' in data: print('** Control asistencia exitosa.')
+    else: print('** Control asistencia fallida.')
+
+def respuesta_borrar_alumno():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+
+    if 'exito' in data: print('** Eliminación Alumno exitosa.')
+    elif 'alumnonoexistente' in data: print('** Error de Eliminación: Alumno no existente en la base de datos.')
+    else: print('** Error de Eliminación Desconocida.')
+
 while True:
     # Create a TCP/IP socket
     sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
@@ -114,11 +147,8 @@ while True:
                             message = '000{}updal {} {} {} {} {} {} {}'.format( largo,4,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
-                                print("Alumno actualizado correctamente")
 
-                            elif loginState == True and rol == 'nopro':
-                                print("Login de usuario normal realizado correctamente")
+                            respuesta_actualizar_alumno()
                     
                         # Borrar Alumno - delal
                         elif opcion == '2':
@@ -129,8 +159,8 @@ while True:
                             message = '000{}delal {} {}'.format( largo,5,Rut ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
-                                print("Almuno eliminado correctamente")
+
+                            respuesta_borrar_alumno()
 
                         #Registrar Personal - newpe
                         elif opcion == '3':
@@ -160,8 +190,8 @@ while True:
                             message = '000{}conas {} {} {} {}'.format( largo,6,Rut,Fecha,Estado ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
-                                print("Asistencia mostrada correctamente en el servicio")
+
+                            respuesta_control_asistencia()
 
                         # Asistencia por jardin - asija
                         elif opcion == '5':
@@ -329,9 +359,6 @@ while True:
                             sock.sendall( message )
 
                             respuesta_registro_alumno()
-
-                            # if respuesta():
-                            #     print("Registro de alumno realizado correctamente")
                             
                         #Actualizacion de usuario - updus
                         elif opcion == '2':

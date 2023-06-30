@@ -39,10 +39,20 @@ try:
                 message = '000{}datos {} {} {} {} {} {} {}'.format(largo,opcion,Rut,Nombre,Apellido,FechaNacimiento,NombreJardin,CursoID).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
-                if sock.recv(4096):
+
+                data = sock.recv(4096).decode()
+                if 'exito' in data:
                     message = '00010updalexito'.encode()
-                    logging.info ('sending {!r}'.format (message))
-                    sock.send(message)
+                elif 'alumnonoexistente' in data:
+                    message = '00027updalfallidoalumnonoexistente'.encode()
+                elif 'jardinnoexistente' in data:
+                    message = '00029updalfallidojardinnoexistente'.encode()
+                else:
+                    message = '00012updalfallido'.encode()
+                
+                logging.info ('sending {!r}'.format (message))
+                sock.sendall(message)
+
             except:
                 pass
             logging.info('-------------------------------')

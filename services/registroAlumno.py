@@ -4,18 +4,6 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-def respuesta_registro_alumno():
-    time.sleep(2)
-    data = sock.recv(4096).decode()
-    if 'exito' in data:
-        return 1
-    elif 'alumnoexistente' in data:
-        return 2
-    elif 'jardinnoexistente' in data:
-        return 3
-    else:
-        return 4
-
 # Create a TCP/IP socket
 sock = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
 # Connect the socket to the port where the server is listening
@@ -52,16 +40,29 @@ try:
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
 
-                result = respuesta_registro_alumno()
-                if result == 1:
+                data = sock.recv(4096).decode()
+                if 'exito' in data:
                     message = '00010newalexito'.encode()
+                elif 'alumnonoexistente' in data:
+                    message = '00027newalfallidoalumnoexistente'.encode()
+                elif 'jardinnoexistente' in data:
+                    message = '00029newalfallidojardinnoexistente'.encode()
                 else:
                     message = '00012newalfallido'.encode()
 
+                # result = respuesta_registro_alumno()
+                # print("Resulto", result)
+                # if result == 1:
+                    
+                # else:
+                #     message = '00012newalfallido'.encode()
+
                 logging.info ('sending {!r}'.format (message))
-                    sock.send(message)
+                sock.sendall(message)
                     
             except:
+                message = '00012newalfallido'.encode()
+                logging.info ('sending {!r}'.format (message))
                 pass
             logging.info('-------------------------------')
 
