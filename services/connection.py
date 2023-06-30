@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-init_sql_file = "/home/users/rodrigo.ordenes/ArquiSW/db/init.sql"
+init_sql_file = "/home/users/diego.carrillo1/ArquiSW/db/init.sql"
 
 def read_init_sql(file_path):
     with open(file_path, "r") as sql_file:
@@ -254,6 +254,7 @@ def eliminarUsuario(Rut):
 
 def actualizarUsuario(Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin):
     ver = True
+    msg = ''
     try:
         cursor.execute("""
             SELECT COUNT(*) FROM Usuarios WHERE Rut = ?
@@ -269,9 +270,11 @@ def actualizarUsuario(Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin):
 
         if count_usuario < 1:
             logging.info("El Rut de usuario no es valido.")
+            msg ='El-rut-del-usuario-ya-existe'
             ver = False
         if count_jardin < 1:
             logging.info("El jardin no existe.")
+            msg ='El-jardin-no-existe'
             ver = False
 
         if ver == True:
@@ -280,6 +283,8 @@ def actualizarUsuario(Nombre, Rut, Correo, Contrasena, Telefono, Rol, Jardin):
             """, (Nombre, Correo, Contrasena, Telefono, Rol, Jardin, Rut))
             conn.commit()
             logging.info("Datos actualizados correctamente")
+            msg ='Datos-actualizados-correctamente'
+        return msg
 
     except sqlite3.Error as error:
         logging.info("Error al actualizar el usuario:", error)
@@ -425,7 +430,7 @@ def asistenciaPorJardin(NombreJardin,FechaDesde,FechaHasta):
     except sqlite3.Error as error:
         logging.info("Error al revisar las asistencias por jardín:", error)
 
-conn = sqlite3.connect("/home/users/rodrigo.ordenes/ArquiSW/services/database.db")
+conn = sqlite3.connect("/home/users/diego.carrillo1/ArquiSW/services/database.db")
 cursor = conn.cursor()
 
 read_init_sql(init_sql_file)
@@ -604,8 +609,9 @@ try:
                     Jardin = data[8]
 
                     logging.info('Actualizando Usuario...')
-                    actualizarUsuario(Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin)
-                    message = '00015datosupdusrexito'.encode()
+                    msg = actualizarUsuario(Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin)
+                    largo = 16 + len(msg)
+                    message = '000{}datosupdusrexito {}'.format(largo,msg).encode()
                     logging.info ('sending {!r}'.format (message))
                     sock.send(message)
 

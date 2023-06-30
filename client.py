@@ -94,6 +94,14 @@ def respuesta_borrar_alumno():
     elif 'alumnonoexistente' in data: print('** Error de Eliminación: Alumno no existente en la base de datos.')
     else: print('** Error de Eliminación Desconocida.')
 
+def respuesta_borrar_usuario():
+    time.sleep(2)
+    data = sock.recv(4096).decode()
+
+    if 'exito' in data: print('** Eliminación Alumno exitosa.')
+    else: print('** Error de Eliminación.')
+
+
 def respuesta_asistencia_jardin():
     time.sleep(2)
     data = sock.recv(4096).decode()
@@ -217,7 +225,7 @@ while True:
             message = '000{}login {} {} {}'.format(largo,opcion,Rut,Contrasena).encode()
             print ('sending {!r}'.format (message))
             sock.sendall (message)
-            loginState,rol = respuestaLogin()
+            loginState, rol = respuestaLogin()
 
             if loginState == True and rol == 1: #Director
                 print("Login de director realizado correctamente")
@@ -398,8 +406,8 @@ while True:
                             message = '000{}delus {} {}'.format( largo,11,Rut ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
-                                print("Usuario eliminado correctamente")
+                            
+                            respuesta_borrar_usuario()
                     
                         # Creacion Jardin - newja
                         elif opcion == '3':
@@ -489,11 +497,10 @@ while True:
 
                             largo = len( Nombre+Rut+Correo+Contrasena+Telefono+Rol+Jardin ) + 16 + 1
 
-                            message = '000{}updus {} {} {} {} {} {} {} {}'.format( largo,4,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin ).encode()
+                            message = '000{}updus {} {} {} {} {} {} {} {}'.format( largo,12,Nombre,Rut,Correo,Contrasena,Telefono,Rol,Jardin ).encode()
                             print ('sending {!r}'.format (message))
                             sock.sendall( message )
-                            if respuesta():
-                                print("Usuario actualizado correctamente")
+                            respuesta()
 
                     except:
                         pass
