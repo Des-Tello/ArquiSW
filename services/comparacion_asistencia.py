@@ -34,7 +34,7 @@ try:
                 FechaDesde = data[4]
                 FechaHasta = data[5]
                 largo = len(NivelEducativo1+NivelEducativo2+FechaDesde+FechaHasta+opcion) + 10
-                message = '000{}datas {} {} {} {} {}'.format(largo,opcion,NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta).encode()
+                message = '000{}datos {} {} {} {} {}'.format(largo,opcion,NivelEducativo1,NivelEducativo2,FechaDesde,FechaHasta).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
                 algo = sock.recv(4096).decode()

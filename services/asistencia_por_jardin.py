@@ -32,7 +32,7 @@ try:
                 FechaDesde = data[3]
                 FechaHasta = data[4]
                 largo = len(NombreJardin+FechaDesde+FechaHasta+opcion) + 9
-                message = '000{}datas {} {} {} {}'.format(largo,opcion,NombreJardin,FechaDesde,FechaHasta).encode()
+                message = '000{}datos {} {} {} {}'.format(largo,opcion,NombreJardin,FechaDesde,FechaHasta).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
                 algo = sock.recv(4096).decode()

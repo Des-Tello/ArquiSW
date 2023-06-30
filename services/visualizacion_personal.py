@@ -34,7 +34,7 @@ try:
                 #FechaHasta = data[5]
                 
                 largo = len(PersonalRut+Fecha+opcion) + 8
-                message = '000{}datas {} {} {}'.format(largo,opcion,PersonalRut,Fecha).encode()
+                message = '000{}datos {} {} {}'.format(largo,opcion,PersonalRut,Fecha).encode()
                 logging.info ('sending to bbdd {!r}'.format (message))
                 sock.sendall(message)
                 algo = sock.recv(4096).decode() 
